@@ -13,7 +13,7 @@ const rows = computed(() => stops.value.map((s) => ({
   icon: s.kind === 'mrt' ? 'train' : 'directions_bus',
   title: s.name,
   sub: s.note,
-  meta: `${s.code} · ${shelter[s.sh]}`,
+  meta: `${s.code} · ${shelter[s.sh]}`, // test
 })));
 </script>
 
