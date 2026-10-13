@@ -20,7 +20,6 @@ const rows = computed(() => options.value.map((r) => ({
   <FeaturePlaceholder
     title="Compare routes"
     icon="alt_route"
-    owner="Amanda"
     summary="Every option side by side: time, transfers, walking, live departures, rain exposure and comfort."
   >
     <MockList :items="rows" />

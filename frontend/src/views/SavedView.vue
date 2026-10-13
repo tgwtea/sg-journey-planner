@@ -20,7 +20,6 @@ const savedRows = computed(() => saved.value.map((r) => ({ id: r.id, icon: 'book
       <FeaturePlaceholder
         title="Forecast alerts"
         icon="notifications"
-        owner="Woody"
         summary="RouteWise warns you when rain is forecast near the usual time of a saved trip."
       >
         <MockList :items="alertRows" />
@@ -30,7 +29,6 @@ const savedRows = computed(() => saved.value.map((r) => ({ id: r.id, icon: 'book
       <FeaturePlaceholder
         title="Saved routes"
         icon="bookmark"
-        owner="Woody"
         summary="For habitual trips. Save a route and its usual time."
       >
         <MockList :items="savedRows" />

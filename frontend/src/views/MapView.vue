@@ -21,7 +21,6 @@ const rows = computed(() => stops.value.map((s) => ({
   <FeaturePlaceholder
     title="Rain-aware map"
     icon="map"
-    owner="Dillon"
     summary="Nearby bus and MRT stops on a map. Each stop shows the rain forecast for its area, so you can pick a drier boarding point."
   >
     <MockList :items="rows" />

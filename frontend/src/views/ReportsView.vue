@@ -21,7 +21,6 @@ const rows = computed(() => reports.value.map((r) => {
   <FeaturePlaceholder
     title="Community reports"
     icon="forum"
-    owner="Anumitaa"
     summary="From commuters on the ground. Quick reports for a stop or station. Newest first."
   >
     <div class="d-flex flex-wrap gap-2 mb-3">

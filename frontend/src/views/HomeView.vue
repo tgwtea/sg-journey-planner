@@ -63,7 +63,6 @@ const details = computed(() => {
     <FeaturePlaceholder
       title="Smart departure"
       icon="schedule"
-      owner="Tan Guan Wei"
       summary="Enter an origin and a destination. RouteWise recommends whether to leave now or wait, and shows the main reason."
     >
       <MockList :items="nearbyRows" />
