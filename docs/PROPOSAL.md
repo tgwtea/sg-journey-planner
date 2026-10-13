@@ -10,11 +10,10 @@ This file is the durable text copy. If the PDF changes, update this file.
 | 1 | Tan Guan Wei | guanwei.tan.2025@computing.smu.edu.sg | Smart Departure Recommender |
 | 2 | Dillon Ang Jun Le | dillon.ang.2025@computing.smu.edu.sg | Rain-Aware Route Finder |
 | 3 | Kong Jia Zhen, Amanda | amanda.kong.2025@computing.smu.edu.sg | Route Comparison with Live Conditions |
-| 4 | Lu Jia Hong ("Woody" in the roles table) | jiahong.lu.2025@computing.smu.edu.sg | Weather-Triggered Trip Alerts / Saved Routes |
+| 4 | Lu Jia Hong ("Woody") | jiahong.lu.2025@computing.smu.edu.sg | Weather-Triggered Trip Alerts / Saved Routes |
 | 5 | Anumitaa Murali | anumitaa.m.2024@computing.smu.edu.sg | Community Reports & App Integration |
 
-> Open item: the PDF roles table names "Woody" in row 4. The member table names Lu Jia Hong
-> in row 4. The team must confirm that these are the same person.
+Note: the PDF roles table uses "Woody". Woody is Lu Jia Hong.
 
 ## Problem
 
@@ -67,7 +66,7 @@ Responsibilities:
 4. Produce clear reasons for each recommendation.
 5. Build the route-comparison screen. Test it with different journey and weather scenarios.
 
-### 4. Weather-Triggered Trip Alerts / Saved Routes (Woody)
+### 4. Weather-Triggered Trip Alerts / Saved Routes (Woody, Lu Jia Hong)
 
 Users save frequent routes and their usual travel times. When the app opens, it checks the
 forecast and shows a warning if rain is expected near a saved travel time.

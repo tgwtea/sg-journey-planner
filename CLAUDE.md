@@ -29,7 +29,7 @@ when to leave.
 | Smart Departure Recommender | Tan Guan Wei | Home |
 | Rain-Aware Route Finder (owns weather data) | Dillon | Map, Home weather |
 | Route Comparison with Live Conditions | Amanda | Routes |
-| Weather-Triggered Trip Alerts / Saved Routes | Woody (Lu Jia Hong, to be confirmed) | Saved |
+| Weather-Triggered Trip Alerts / Saved Routes | Woody (Lu Jia Hong) | Saved |
 | Community Reports & App Integration, E2E tests | Anumitaa | Reports |
 
 ## Stack
