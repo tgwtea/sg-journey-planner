@@ -61,4 +61,4 @@ Postman: import `postman/sg-journey-planner.postman_collection.json`.
 
 ## Team
 
-See `docs/PROPOSAL.md` for owners and responsibilities. Agents: read `CLAUDE.md`.
+See `docs/PROPOSAL.md` for owners and responsibilities.

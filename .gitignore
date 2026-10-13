@@ -21,3 +21,7 @@ playwright/.cache/
 .vscode/*
 !.vscode/extensions.json
 .idea/
+
+# Local agent guidance (not published)
+CLAUDE.md
+AGENTS.md
