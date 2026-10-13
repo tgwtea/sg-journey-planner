@@ -30,8 +30,17 @@ test('every tab opens its screen', async ({ page }) => {
   }
 });
 
+test('home loads the weather on open', async ({ page }) => {
+  await page.goto('/');
+  // Success, empty, or error all count: the hero must leave idle and loading.
+  await expect(page.getByText('Weather not loaded')).toHaveCount(0);
+  await expect(page.getByText('Loading weather…')).toHaveCount(0, { timeout: 15000 });
+});
+
 test('weather switch changes the sky', async ({ page }) => {
   await page.goto('/');
+  // Wait for the live fetch, so its condition does not overwrite the switch.
+  await expect(page.getByText('Loading weather…')).toHaveCount(0, { timeout: 15000 });
   await page.getByRole('radio', { name: 'Heavy rain' }).click();
   await expect(page.locator('[data-rwroot]')).toHaveAttribute('data-wx', 'heavy');
 });

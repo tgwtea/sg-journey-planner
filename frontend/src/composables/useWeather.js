@@ -1,5 +1,5 @@
 import { ref } from 'vue';
-// import { fetchWeather } from '../services/weatherService.js';
+import { fetchWeather } from '../services/weatherService.js';
 
 /**
  * Weather state for one area. STUDENT-OWNED.
@@ -15,11 +15,17 @@ export function useWeather(area = 'City') {
   const errorMessage = ref('');
 
   async function refresh() {
-    // TODO(student): set status to 'loading'.
-    // TODO(student): call fetchWeather(area) and store the result in `weather`.
-    // TODO(student): set 'success', or 'empty' if there is no reading.
-    // TODO(student): on failure, set 'error' and a friendly errorMessage.
-    console.info(`[useWeather] refresh() is not implemented yet (area: ${area}).`);
+    status.value = 'loading';
+    errorMessage.value = '';
+    try {
+      const data = await fetchWeather(area);
+      weather.value = data;
+      status.value = data?.forecast ? 'success' : 'empty';
+    } catch (err) {
+      weather.value = null;
+      errorMessage.value = err.response?.data?.error?.message || 'We could not load the weather. Try again.';
+      status.value = 'error';
+    }
   }
 
   return { area, status, weather, errorMessage, refresh };

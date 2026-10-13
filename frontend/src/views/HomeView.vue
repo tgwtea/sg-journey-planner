@@ -23,6 +23,8 @@ watch(
 // Mock data until transport fixtures exist.
 const stops = ref([]);
 onMounted(async () => { stops.value = (await getNearbyStops()).slice(0, 3); });
+
+onMounted(refresh);
 const nearbyRows = computed(() => stops.value.map((s) => ({
   id: s.id, icon: s.kind === 'mrt' ? 'train' : 'directions_bus', title: s.name, sub: s.note, meta: s.code,
 })));
