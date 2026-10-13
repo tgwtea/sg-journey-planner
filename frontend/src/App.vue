@@ -7,7 +7,8 @@ import BottomTabBar from './components/BottomTabBar.vue';
 // App-wide UI state (not weather data).
 // `wx` is the sky look: 'clear' | 'light' | 'heavy'.
 // The header switch sets it for demos. Live weather can set it later.
-const ui = reactive({ dark: false, wx: 'clear' });
+// `pal` is the colour palette: 'vivid' (default) | 'calm'.
+const ui = reactive({ dark: false, wx: 'clear', pal: 'vivid' });
 provide('ui', ui);
 
 const route = useRoute();
@@ -15,7 +16,7 @@ const columnWidth = computed(() => route.meta.width || '1180px');
 </script>
 
 <template>
-  <div data-rwroot="1" :data-rw="ui.dark ? 'dark' : 'light'" :data-wx="ui.wx" class="rw-root">
+  <div data-rwroot="1" :data-rw="ui.dark ? 'dark' : 'light'" :data-pal="ui.pal" :data-wx="ui.wx" class="rw-root">
     <AppHeader />
     <main class="rw-main" :style="{ maxWidth: columnWidth }">
       <RouterView />

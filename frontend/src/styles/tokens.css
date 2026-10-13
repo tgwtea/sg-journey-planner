@@ -35,3 +35,202 @@
 [data-rwroot][data-rw="dark"][data-wx="clear"] { --sky: linear-gradient(180deg, #0A0E15, #121823 55%, #1A202A); }
 [data-rwroot][data-rw="dark"][data-wx="light"] { --sky: linear-gradient(180deg, #0D1116, #161B22 55%, #1C2128); }
 [data-rwroot][data-rw="dark"][data-wx="heavy"] { --sky: linear-gradient(180deg, #090C10, #11151A 55%, #161A1F); }
+
+/* Weather hero and rain-bar tokens. Copied from design/RouteWise v3.dc.html. */
+[data-rwroot] {
+  --hero: transparent;
+  --onHero: var(--ink);
+  --onHero2: var(--ink2);
+  --heroChip: var(--chip);
+  --blob1: transparent;
+  --blob2: transparent;
+  --tint: rgba(255,255,255,.55);
+  --barHi: #12161C;
+  --barMid: #565D67;
+}
+[data-rwroot][data-rw="dark"] {
+  --tint: rgba(255,255,255,.07);
+  --barHi: #EDF0F4;
+  --barMid: #A2A9B3;
+}
+
+/* Vivid palette (v3 default). The root sets data-pal="vivid". Each weather state has its own colours. */
+[data-rwroot][data-pal="vivid"] {
+  --glassBd: rgba(255,255,255,.85);
+  --glassSh: inset 0 1px 0 rgba(255,255,255,.8),0 10px 30px rgba(60,40,90,.08);
+  --glassShHi: inset 0 1px 0 rgba(255,255,255,.8),0 18px 44px rgba(60,40,90,.16);
+  --surf: #fff;
+  --road: #fff;
+  --field: rgba(255,255,255,.75);
+  --heroChip: rgba(255,255,255,.4);
+}
+[data-rwroot][data-pal="vivid"][data-wx="clear"] {
+  --bg: #FFF1DE;
+  --ink: #2B1A0C;
+  --ink2: #664630;
+  --ink3: #86634A;
+  --glass: rgba(255,250,243,.72);
+  --glassHi: rgba(255,250,243,.94);
+  --chip: rgba(232,110,30,.12);
+  --line: rgba(90,50,15,.1);
+  --lineS: rgba(90,50,15,.24);
+  --solid: #2B1A0C;
+  --onSolid: #FFF4E6;
+  --hero: #FF8C42;
+  --onHero: #2B1A0C;
+  --onHero2: #3F2410;
+  --blob1: #FFC94A;
+  --blob2: #FFB4A2;
+  --tint: #FFE3C2;
+  --barHi: #D9601A;
+  --barMid: #FFB27A;
+  --rain: #664630;
+  --land: rgba(255,248,238,.92);
+  --sea: rgba(184,222,240,.95);
+  --park: rgba(214,238,196,.95);
+  --halo: #FFF6EA;
+}
+[data-rwroot][data-pal="vivid"][data-wx="light"] {
+  --bg: #E8F0FF;
+  --ink: #0F1E3D;
+  --ink2: #3B4D70;
+  --ink3: #56688C;
+  --glass: rgba(248,251,255,.7);
+  --glassHi: rgba(248,251,255,.94);
+  --chip: rgba(60,110,240,.1);
+  --line: rgba(20,40,90,.1);
+  --lineS: rgba(20,40,90,.22);
+  --solid: #0F1E3D;
+  --onSolid: #fff;
+  --hero: #8DB4FF;
+  --onHero: #0F1E3D;
+  --onHero2: #1E3360;
+  --blob1: #C4D9FF;
+  --blob2: #8FE3CF;
+  --tint: #D8E5FF;
+  --barHi: #3F6FE0;
+  --barMid: #9DBBFF;
+  --rain: #3F6FE0;
+  --land: rgba(244,248,255,.92);
+  --sea: rgba(178,204,255,.95);
+  --park: rgba(200,236,222,.95);
+  --halo: #F2F6FF;
+}
+[data-rwroot][data-pal="vivid"][data-wx="heavy"] {
+  --bg: #ECE9FF;
+  --ink: #1A1640;
+  --ink2: #48437A;
+  --ink3: #625D92;
+  --glass: rgba(250,249,255,.7);
+  --glassHi: rgba(250,249,255,.94);
+  --chip: rgba(90,70,230,.1);
+  --line: rgba(30,20,90,.1);
+  --lineS: rgba(30,20,90,.22);
+  --solid: #1A1640;
+  --onSolid: #fff;
+  --hero: #4B3FD1;
+  --onHero: #fff;
+  --onHero2: #DDD9FF;
+  --heroChip: rgba(255,255,255,.16);
+  --blob1: #6F61F0;
+  --blob2: #FF8FB1;
+  --tint: #DEDAFF;
+  --barHi: #4B3FD1;
+  --barMid: #A79FF5;
+  --rain: #4B3FD1;
+  --land: rgba(246,244,255,.92);
+  --sea: rgba(196,188,255,.95);
+  --park: rgba(214,232,226,.95);
+  --halo: #F3F1FF;
+}
+[data-rwroot][data-pal="vivid"][data-rw="dark"] {
+  --glassBd: rgba(255,255,255,.1);
+  --glassSh: inset 0 1px 0 rgba(255,255,255,.06),0 10px 36px rgba(0,0,0,.35);
+  --glassShHi: inset 0 1px 0 rgba(255,255,255,.07),0 18px 48px rgba(0,0,0,.55);
+  --field: rgba(255,255,255,.07);
+  --chip: rgba(255,255,255,.08);
+  --line: rgba(255,255,255,.09);
+  --lineS: rgba(255,255,255,.22);
+  --heroChip: rgba(255,255,255,.14);
+  --onHero: #fff;
+}
+[data-rwroot][data-pal="vivid"][data-rw="dark"][data-wx="clear"] {
+  --bg: #1A1530;
+  --ink: #FBF4EA;
+  --ink2: #CDBFD8;
+  --ink3: #9F92B4;
+  --glass: rgba(42,33,70,.58);
+  --glassHi: rgba(42,33,70,.92);
+  --solid: #FFD9A8;
+  --onSolid: #2B1A0C;
+  --hero: #3A2A72;
+  --onHero2: #E2D8FF;
+  --blob1: #FFB547;
+  --blob2: #FF7A59;
+  --tint: rgba(255,181,71,.16);
+  --barHi: #FFB547;
+  --barMid: #8A6A9E;
+  --rain: #FFD9A8;
+  --surf: #2A2348;
+  --road: rgba(80,70,120,.9);
+  --land: rgba(30,24,54,.92);
+  --sea: rgba(20,15,40,.95);
+  --park: rgba(38,44,66,.95);
+  --halo: #1E1838;
+}
+[data-rwroot][data-pal="vivid"][data-rw="dark"][data-wx="light"] {
+  --bg: #0E1A30;
+  --ink: #EEF4FF;
+  --ink2: #B4C3DE;
+  --ink3: #8698B8;
+  --glass: rgba(24,40,70,.58);
+  --glassHi: rgba(24,40,70,.92);
+  --solid: #CFE0FF;
+  --onSolid: #0F1E3D;
+  --hero: #1F4A9A;
+  --onHero2: #D6E4FF;
+  --blob1: #4F82F0;
+  --blob2: #3BC9A8;
+  --tint: rgba(110,160,255,.16);
+  --barHi: #8DB4FF;
+  --barMid: #3E5C93;
+  --rain: #8DB4FF;
+  --surf: #1E3358;
+  --road: rgba(52,78,120,.9);
+  --land: rgba(18,32,58,.92);
+  --sea: rgba(10,20,40,.95);
+  --park: rgba(26,52,60,.95);
+  --halo: #12203A;
+}
+[data-rwroot][data-pal="vivid"][data-rw="dark"][data-wx="heavy"] {
+  --bg: #110E26;
+  --ink: #F1EFFF;
+  --ink2: #BEB8E4;
+  --ink3: #8F88BE;
+  --glass: rgba(36,30,80,.58);
+  --glassHi: rgba(36,30,80,.92);
+  --solid: #DCD8FF;
+  --onSolid: #1A1640;
+  --hero: #3A2DB8;
+  --onHero2: #DDD9FF;
+  --blob1: #6556EE;
+  --blob2: #E8608F;
+  --tint: rgba(140,125,255,.18);
+  --barHi: #A99FFF;
+  --barMid: #4A3F98;
+  --rain: #A99FFF;
+  --surf: #2A2360;
+  --road: rgba(70,62,130,.9);
+  --land: rgba(26,22,56,.92);
+  --sea: rgba(14,11,34,.95);
+  --park: rgba(32,38,62,.95);
+  --halo: #1A1638;
+}
+
+/* Vivid sky. v3 paints these stops on a canvas (VSKY). Here they are CSS gradients. */
+[data-rwroot][data-pal="vivid"][data-wx="clear"] { --sky: linear-gradient(180deg, #FFC46B, #FFDDAE 55%, #FFF1DE); }
+[data-rwroot][data-pal="vivid"][data-wx="light"] { --sky: linear-gradient(180deg, #9DBDFF, #CFE0FF 55%, #E8F0FF); }
+[data-rwroot][data-pal="vivid"][data-wx="heavy"] { --sky: linear-gradient(180deg, #6F62E8, #B3AAFF 55%, #ECE9FF); }
+[data-rwroot][data-pal="vivid"][data-rw="dark"][data-wx="clear"] { --sky: linear-gradient(180deg, #2A1F55, #1F1840 55%, #1A1530); }
+[data-rwroot][data-pal="vivid"][data-rw="dark"][data-wx="light"] { --sky: linear-gradient(180deg, #173063, #122242 55%, #0E1A30); }
+[data-rwroot][data-pal="vivid"][data-rw="dark"][data-wx="heavy"] { --sky: linear-gradient(180deg, #2B2080, #1A1550 55%, #110E26); }
