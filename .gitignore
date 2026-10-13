@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+.vercel/
+
+# Environment files (never commit secrets)
+.env
+.env.*
+!.env.example
+
+# Test output
+test-results/
+playwright-report/
+playwright/.cache/
+
+# Logs and OS files
+*.log
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.idea/

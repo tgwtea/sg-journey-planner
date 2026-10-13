@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..700,0..1,0&display=block" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#F2F1EC;font-family:'DM Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+button,input{font-family:inherit}
+a{color:#C2461F}a:hover{color:#8F2F12}
+[data-rwroot]{--bg:#F2F1EC;--surf:#FFFFFF;--surf2:#F7F6F2;--ink:#111111;--ink2:#55534E;--ink3:#8A8882;--line:#E2DFD7;--chip:#ECEAE4;--land:#ECEAE3;--sea:#C9DCE6;--park:#D3E4C9;--road:#FFFFFF;--rain:#2E6BD8;--rainbg:rgba(46,107,216,.12);--bar:#111111}
+[data-rwroot][data-rw="light-light"]{--bg:#E6E9EC;--surf2:#F1F3F5;--chip:#E3E7EB;--land:#E2E5E7;--sea:#B6CBD8;--park:#C8D9C3;--line:#D6DADF}
+[data-rwroot][data-rw="light-heavy"]{--bg:#D2D9E1;--surf:#FBFCFD;--surf2:#ECEFF3;--chip:#DDE3E9;--land:#D6DBE1;--sea:#A3BACB;--park:#BACDB9;--line:#C6CED7;--road:#EEF1F4}
+[data-rwroot][data-rw^="dark"]{--bg:#0E0F11;--surf:#17181B;--surf2:#1E2024;--ink:#F3F2EE;--ink2:#AAA8A1;--ink3:#7A7872;--line:#2B2D32;--chip:#24262A;--land:#1A1C20;--sea:#0F1C25;--park:#16241A;--road:#26292E;--rain:#77A2FF;--rainbg:rgba(119,162,255,.15);--bar:#000000}
+[data-rwroot][data-rw="dark-light"]{--bg:#0B1015;--surf2:#1B2027;--land:#161B21;--sea:#0C1925}
+[data-rwroot][data-rw="dark-heavy"]{--bg:#080C12;--surf:#131820;--surf2:#19202A;--land:#131922;--sea:#0A1521;--line:#27303B}
+@keyframes rwIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes rwPop{0%{opacity:0;transform:scale(.95)}60%{opacity:1;transform:scale(1.015)}100%{transform:scale(1)}}
+@keyframes rwSlide{from{opacity:0;transform:translateX(-16px)}to{opacity:1;transform:none}}
+@keyframes rwUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+@keyframes rwPulse{0%{box-shadow:0 0 0 0 rgba(232,93,58,.6)}100%{box-shadow:0 0 0 9px rgba(232,93,58,0)}}
+@keyframes rwBlink{50%{opacity:.3}}
+@keyframes rwRing{from{transform:scale(.7);opacity:.9}to{transform:scale(2.6);opacity:0}}
+@keyframes rwBreath{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+@keyframes rwDrift{0%,100%{transform:translate(0,0)}50%{transform:translate(14px,6px)}}
+@keyframes rwDash{to{stroke-dashoffset:-48}}
+@keyframes rwLoad{from{width:0}to{width:100%}}
+@keyframes rwFlash{from{background:rgba(232,93,58,.22)}to{background:var(--surf)}}
+@media (prefers-reduced-motion: reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+</style>
+</helmet>
+<div data-rwroot="1" data-rw="{{ themeKey }}" style="min-height:100vh;background:var(--bg);color:var(--ink);transition:background-color .9s ease,color .4s ease;padding-bottom:{{ bottomPad }}">
+<canvas ref="{{ rainRef }}" aria-hidden="true" style="position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:45"></canvas>
+
+<header style="position:sticky;top:0;z-index:50;height:64px;background:var(--bar);color:#fff;display:flex;align-items:center;gap:12px;padding:0 14px 0 18px;border-bottom:3px solid #E85D3A">
+  <button onClick="{{ goHome }}" aria-label="RouteWise home" style="display:flex;align-items:center;gap:10px;background:none;border:0;color:#fff;cursor:pointer;padding:0;flex:none">
+    <span style="width:36px;height:36px;border-radius:9px;background:#E85D3A;color:#111;display:grid;place-items:center"><span class="material-symbols-rounded" style="font-size:24px;font-variation-settings:'FILL' 1,'wght' 600">alt_route</span></span>
+    <span style="font-weight:800;font-size:21px;letter-spacing:-.03em">RouteWise</span>
+  </button>
+  <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
+    <nav aria-label="Main" style="display:flex;gap:2px;margin-left:6px;min-width:0;overflow-x:auto">
+      <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5">
+        <button onClick="{{ t.onClick }}" aria-current="{{ t.cur }}" aria-label="{{ t.label }}" title="{{ t.label }}" style="height:38px;padding:0 11px;border-radius:9px;border:0;background:{{ t.bg }};color:{{ t.fg }};font-size:14.5px;font-weight:700;display:flex;align-items:center;gap:7px;cursor:pointer;transition:background .2s,color .2s" style-active="transform:scale(.95)"><span class="material-symbols-rounded" style="font-size:19px">{{ t.icon }}</span><sc-if value="{{ full }}">{{ t.label }}</sc-if></button>
+      </sc-for>
+    </nav>
+  </sc-if>
+  <div style="flex:1"></div>
+  <div role="radiogroup" aria-label="Weather simulation" style="display:flex;gap:2px;padding:3px;border-radius:11px;background:rgba(255,255,255,.09);flex:none">
+    <sc-for list="{{ wxOpts }}" as="w" hint-placeholder-count="3">
+      <button role="radio" aria-checked="{{ w.on }}" aria-label="{{ w.label }}" onClick="{{ w.onClick }}" style="height:34px;padding:0 10px;border-radius:8px;border:0;background:{{ w.bg }};color:{{ w.fg }};font-size:13.5px;font-weight:700;display:flex;align-items:center;gap:6px;cursor:pointer;transition:background .3s,color .3s" style-active="transform:scale(.92)"><span class="material-symbols-rounded" style="font-size:19px;font-variation-settings:'FILL' 1">{{ w.icon }}</span><sc-if value="{{ full }}">{{ w.label }}</sc-if></button>
+    </sc-for>
+  </div>
+  <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
+    <button onClick="{{ toggleAuto }}" aria-pressed="{{ auto }}" title="Cycle weather automatically" style="height:40px;padding:0 12px;border-radius:10px;border:1px solid rgba(255,255,255,.2);background:{{ autoBg }};color:{{ autoFg }};font-size:13.5px;font-weight:700;display:flex;align-items:center;gap:8px;cursor:pointer;flex:none" style-active="transform:scale(.95)"><span style="width:8px;height:8px;border-radius:50%;background:{{ autoDot }};animation:{{ autoAnim }}"></span><sc-if value="{{ full }}">Auto demo</sc-if><sc-if value="{{ compact }}">Auto</sc-if></button>
+    <button onClick="{{ toggleA11y }}" aria-pressed="{{ a11y }}" aria-label="Show accessibility notes" title="Accessibility notes" style="width:40px;height:40px;border-radius:10px;border:1px solid rgba(255,255,255,.2);background:{{ a11yBg }};color:{{ a11yFg }};display:grid;place-items:center;cursor:pointer;flex:none"><span class="material-symbols-rounded" style="font-size:21px">accessibility_new</span></button>
+    <button onClick="{{ startTour }}" aria-label="Start guided tour" title="Guided tour" style="height:40px;padding:0 12px;border-radius:10px;border:1px solid rgba(255,255,255,.2);background:transparent;color:#fff;display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13.5px;font-weight:700;flex:none"><span class="material-symbols-rounded" style="font-size:20px">explore</span><sc-if value="{{ full }}">Tour</sc-if></button>
+  </sc-if>
+  <button onClick="{{ toggleDark }}" aria-label="Toggle dark mode" style="width:40px;height:40px;border-radius:10px;border:1px solid rgba(255,255,255,.2);background:transparent;color:#fff;display:grid;place-items:center;cursor:pointer;flex:none"><span class="material-symbols-rounded" style="font-size:21px">{{ themeIcon }}</span></button>
+</header>
+
+<sc-if value="{{ a11y }}">
+  <div style="display:flex;gap:8px;align-items:flex-start;margin:12px 20px 0;padding:9px 12px;border:1.5px dashed #2E6BD8;border-radius:8px;background:#EAF0FC;color:#0B2A66;font-size:13px;line-height:1.45"><span class="material-symbols-rounded" style="font-size:18px">accessibility_new</span><span><b>A11y mode on.</b> Rain overlay is decorative (aria-hidden) and stops under prefers-reduced-motion. Weather is a radiogroup; every state change is echoed in text, never colour alone. Dashed notes below annotate each component.</span></div>
+</sc-if>
+
+<main style="display:flex;flex-direction:{{ mainDir }};align-items:flex-start">
+<div style="width:{{ paneW }};flex:{{ paneFlex }};order:{{ paneOrder }};padding:{{ panePad }};min-width:0;max-width:100%">
+
+<sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-direction:column;gap:14px;animation:rwIn .45s ease both">
+  <div>
+    <div style="display:flex;align-items:center;gap:8px;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2)"><span style="width:7px;height:7px;border-radius:50%;background:#009645;animation:rwBlink 2s infinite"></span>Live · {{ clockStr }} · Wed 7 Oct</div>
+    <h1 style="margin:6px 0 0;font-size:34px;line-height:1.05;letter-spacing:-.035em;font-weight:800;text-wrap:balance">{{ greeting }}</h1>
+  </div>
+
+  <div style="background:var(--surf);border:1px solid var(--line);border-radius:12px;padding:16px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:center;transition:background .6s">
+    <div style="width:64px;height:64px;border-radius:10px;background:{{ wxTileBg }};color:{{ wxTileFg }};display:grid;place-items:center;transition:background .6s"><span class="material-symbols-rounded" style="font-size:38px;font-variation-settings:'FILL' 1">{{ wxIcon }}</span></div>
+    <div style="min-width:0">
+      <div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap"><span style="font-size:20px;font-weight:800;letter-spacing:-.02em">{{ wxTitle }}</span><span style="color:var(--ink2);font-size:14px;font-family:'DM Mono',monospace">{{ wxMeta }}</span></div>
+      <div style="font-size:14px;color:var(--ink2);margin-top:2px;text-wrap:pretty">{{ wxSub }}</div>
+      <div aria-label="{{ barsLabel }}" role="img" style="display:flex;align-items:flex-end;gap:3px;height:30px;margin-top:10px">
+        <sc-for list="{{ rainBars }}" as="b" hint-placeholder-count="12"><div style="flex:1;height:{{ b.h }};background:{{ b.c }};border-radius:3px;transition:height .7s cubic-bezier(.2,.8,.2,1),background .7s"></div></sc-for>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:11px;color:var(--ink3);margin-top:4px"><span>Rain chance · now</span><span>+30</span><span>+60 min</span></div>
+    </div>
+  </div>
+
+  <div style="background:var(--surf);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px">
+    <div style="display:flex;align-items:center;justify-content:space-between"><span style="display:inline-flex;align-items:center;gap:6px;background:var(--ink);color:var(--surf);padding:4px 8px;border-radius:6px;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase">Plan a journey</span><span style="font-size:13px;color:var(--ink3)">Bus · MRT · walking</span></div>
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <label style="display:flex;align-items:center;gap:10px;background:var(--surf2);border:1px solid var(--line);border-radius:10px;padding:0 12px;height:50px">
+          <span style="width:12px;height:12px;border-radius:50%;border:3px solid var(--ink);flex:none"></span>
+          <span style="font-size:12px;color:var(--ink3);width:30px;flex:none">From</span>
+          <input value="{{ origin }}" onChange="{{ onOrigin }}" aria-label="Origin" style="flex:1;border:0;background:transparent;font-size:16px;font-weight:700;color:var(--ink);outline:none;min-width:0">
+          <span class="material-symbols-rounded" title="Use my location" style="font-size:20px;color:var(--ink3)">my_location</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:10px;background:var(--surf2);border:1px solid var(--line);border-radius:10px;padding:0 12px;height:50px">
+          <span style="width:12px;height:12px;border-radius:3px;background:#E85D3A;flex:none"></span>
+          <span style="font-size:12px;color:var(--ink3);width:30px;flex:none">To</span>
+          <input value="{{ dest }}" onChange="{{ onDest }}" aria-label="Destination" placeholder="Where to?" style="flex:1;border:0;background:transparent;font-size:16px;font-weight:700;color:var(--ink);outline:none;min-width:0">
+        </label>
+      </div>
+      <button onClick="{{ swap }}" aria-label="Swap origin and destination" style="width:44px;height:44px;border-radius:10px;border:1px solid var(--line);background:var(--surf);color:var(--ink);cursor:pointer;display:grid;place-items:center;transition:transform .3s" style-active="transform:rotate(180deg) scale(.9)"><span class="material-symbols-rounded" style="font-size:22px">swap_vert</span></button>
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"><span style="font-size:12.5px;color:var(--ink3);margin-right:2px">Popular:</span>
+      <sc-for list="{{ destChips }}" as="d" hint-placeholder-count="4"><button onClick="{{ d.onClick }}" style="height:30px;padding:0 10px;border-radius:7px;border:1px solid var(--line);background:{{ d.bg }};color:{{ d.fg }};font-size:13px;font-weight:600;cursor:pointer" style-active="transform:scale(.94)">{{ d.label }}</button></sc-for>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <div style="display:flex;gap:2px;padding:3px;border-radius:10px;background:var(--chip);flex-wrap:wrap">
+        <sc-for list="{{ whenOpts }}" as="w" hint-placeholder-count="3"><button onClick="{{ w.onClick }}" aria-pressed="{{ w.on }}" style="height:36px;padding:0 11px;border-radius:8px;border:0;background:{{ w.bg }};color:{{ w.fg }};box-shadow:{{ w.sh }};font-size:13.5px;font-weight:700;cursor:pointer;transition:all .2s">{{ w.label }}</button></sc-for>
+      </div>
+      <div style="flex:1"></div>
+      <button onClick="{{ plan }}" data-tour="plan" style="height:50px;padding:0 22px;border-radius:10px;border:0;background:#E85D3A;color:#111;font-weight:800;font-size:16px;display:flex;align-items:center;gap:8px;cursor:pointer;transition:transform .12s" style-active="transform:scale(.95)">Plan route<span class="material-symbols-rounded" style="font-size:22px">arrow_forward</span></button>
+    </div>
+  </div>
+
+  <div aria-live="polite" style="background:#111;color:#fff;border-radius:12px;padding:20px;position:relative;overflow:hidden;min-height:240px;outline:3px solid {{ recOutline }};outline-offset:-3px;transition:outline-color .5s">
+    <sc-if value="{{ analysing }}">
+      <div style="display:flex;flex-direction:column;gap:14px;animation:rwIn .3s ease both">
+        <div style="font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#aaa">Smart departure · thinking</div>
+        <div style="font-size:30px;font-weight:800;letter-spacing:-.03em">Checking your options…</div>
+        <div style="font-size:15px;color:#ccc">4 routes · 2 rain cells · 14 live arrivals · walking shelter along SMU → VivoCity</div>
+        <div style="height:6px;border-radius:3px;background:#2a2a2a;overflow:hidden"><div style="height:100%;background:#E85D3A;animation:rwLoad 1.2s ease both"></div></div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ notAnalysing }}" hint-placeholder-val="{{ true }}">
+      <div key="{{ recKey }}" style="animation:rwPop .6s cubic-bezier(.2,.9,.3,1.2) both">
+        <div style="display:flex;align-items:center;gap:8px;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#bbb"><span style="width:8px;height:8px;border-radius:50%;background:#E85D3A;animation:rwPulse 1.6s infinite"></span>Smart departure · {{ routeLabel }}</div>
+        <div style="display:flex;align-items:center;gap:20px;margin-top:12px;flex-wrap:wrap">
+          <div style="flex:1;min-width:220px">
+            <div style="font-size:14px;color:#bbb;font-weight:600">RouteWise recommends</div>
+            <div style="font-size:58px;line-height:.95;font-weight:800;letter-spacing:-.045em;color:{{ recColor }};margin-top:4px">{{ recHeadline }}</div>
+            <div style="font-size:16px;line-height:1.45;margin-top:10px;color:#eee;text-wrap:pretty">{{ recReason }}</div>
+          </div>
+          <div style="position:relative;width:104px;height:104px;flex:none">
+            <svg viewBox="0 0 80 80" width="104" height="104" style="transform:rotate(-90deg)"><circle cx="40" cy="40" r="34" fill="none" style="stroke:#2a2a2a;stroke-width:7px"></circle><circle cx="40" cy="40" r="34" fill="none" style="stroke:{{ recColor }};stroke-width:7px;stroke-linecap:round;stroke-dasharray:{{ ringDash }};transition:stroke-dasharray 1s linear"></circle></svg>
+            <div style="position:absolute;inset:0;display:grid;place-items:center;text-align:center">
+              <div><div style="font-family:'DM Mono',monospace;font-size:20px;font-weight:500">{{ ringText }}</div><div style="font-size:11px;color:#aaa;margin-top:2px">{{ ringSub }}</div></div>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:14px">
+          <sc-for list="{{ recChips }}" as="c" hint-placeholder-count="2"><span style="height:28px;padding:0 10px;border-radius:7px;background:#222;border:1px solid #333;display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700"><span class="material-symbols-rounded" style="font-size:16px;color:{{ c.c }}">{{ c.icon }}</span>{{ c.label }}</span></sc-for>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:14px">
+          <sc-for list="{{ recCompare }}" as="o" hint-placeholder-count="2">
+            <div style="border-radius:10px;padding:12px;background:{{ o.bg }};border:1.5px solid {{ o.bd }}">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span style="font-weight:800;font-size:15px">{{ o.title }}</span><sc-if value="{{ o.pick }}"><span style="font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;background:{{ o.tagBg }};color:#111;padding:3px 6px;border-radius:5px">Pick</span></sc-if></div>
+              <div style="font-size:13px;color:#ccc;margin-top:4px">{{ o.route }}</div>
+              <div style="font-size:13px;color:{{ o.expC }};margin-top:2px;display:flex;align-items:center;gap:4px"><span class="material-symbols-rounded" style="font-size:15px">{{ o.expIcon }}</span>{{ o.exp }}</div>
+              <div style="font-family:'DM Mono',monospace;font-size:13px;margin-top:6px">Arrive {{ o.arrive }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
+          <button onClick="{{ goRoutes }}" style="height:46px;padding:0 18px;border-radius:10px;border:0;background:#E85D3A;color:#111;font-weight:800;font-size:15px;display:flex;align-items:center;gap:8px;cursor:pointer" style-active="transform:scale(.95)">Compare 4 routes<span class="material-symbols-rounded" style="font-size:20px">arrow_forward</span></button>
+          <button onClick="{{ toggleRemind }}" aria-pressed="{{ remind }}" style="height:46px;padding:0 14px;border-radius:10px;border:1px solid #444;background:{{ remindBg }};color:{{ remindFg }};font-weight:700;font-size:14px;display:flex;align-items:center;gap:7px;cursor:pointer" style-active="transform:scale(.95)"><span class="material-symbols-rounded" style="font-size:19px">{{ remindIcon }}</span>{{ remindLabel }}</button>
+        </div>
+      </div>
+    </sc-if>
+  </div>
+  <sc-if value="{{ a11y }}"><div style="display:flex;gap:8px;align-items:flex-start;padding:9px 12px;border:1.5px dashed #2E6BD8;border-radius:8px;background:#EAF0FC;color:#0B2A66;font-size:13px;line-height:1.45"><span class="material-symbols-rounded" style="font-size:18px">accessibility_new</span><span>Recommendation lives in an aria-live="polite" region — announced when Leave/Wait flips, not every countdown tick. Headline colour is always paired with the words "Wait" or "Leave now".</span></div></sc-if>
+
+  <div style="background:var(--surf);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px">
+    <div style="display:flex;align-items:center;justify-content:space-between"><span style="display:inline-flex;align-items:center;gap:6px;background:var(--ink);color:var(--surf);padding:4px 8px;border-radius:6px;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase">Nearby stops</span><button onClick="{{ goMap }}" style="border:0;background:none;color:var(--ink2);font-weight:700;font-size:13.5px;cursor:pointer;display:flex;align-items:center;gap:4px">Open map<span class="material-symbols-rounded" style="font-size:18px">arrow_forward</span></button></div>
+    <sc-for list="{{ nearby }}" as="n" hint-placeholder-count="4">
+      <button onClick="{{ n.onClick }}" style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;text-align:left;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--surf2);color:var(--ink);cursor:pointer;transition:transform .15s,border-color .2s" style-hover="border-color:var(--ink3)" style-active="transform:scale(.98)">
+        <div style="min-width:0">
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><span style="font-weight:800;font-size:15px">{{ n.name }}</span><sc-for list="{{ n.chips }}" as="c"><span style="font-size:11px;font-weight:800;padding:2px 5px;border-radius:4px;background:{{ c.bg }};color:{{ c.fg }};font-family:'DM Mono',monospace">{{ c.t }}</span></sc-for></div>
+          <div style="display:flex;align-items:center;gap:10px;margin-top:4px;font-size:12.5px;color:var(--ink2);flex-wrap:wrap"><span>{{ n.dist }}</span><span style="display:flex;align-items:center;gap:3px"><span class="material-symbols-rounded" style="font-size:15px">{{ n.shIcon }}</span>{{ n.shLabel }}</span><span style="display:flex;align-items:center;gap:3px;color:{{ n.wxC }}"><span class="material-symbols-rounded" style="font-size:15px">{{ n.wxIcon }}</span>{{ n.wxLabel }}</span></div>
+        </div>
+        <div style="display:flex;gap:4px">
+          <sc-for list="{{ n.arr }}" as="a"><div style="display:flex;flex-direction:column;align-items:center;gap:3px;min-width:44px"><span style="font-size:11px;font-weight:800;padding:2px 6px;border-radius:4px;background:{{ a.bg }};color:{{ a.fg }}">{{ a.svc }}</span><span style="font-family:'DM Mono',monospace;font-size:12.5px;font-weight:500;color:{{ a.tc }};animation:{{ a.anim }}">{{ a.t }}</span></div></sc-for>
+        </div>
+      </button>
+    </sc-for>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px">
+    <div style="background:var(--surf);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;align-items:center;justify-content:space-between"><span style="display:inline-flex;background:var(--ink);color:var(--surf);padding:4px 8px;border-radius:6px;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase">Saved</span><button onClick="{{ goSaved }}" style="border:0;background:none;color:var(--ink2);font-weight:700;font-size:13.5px;cursor:pointer">All</button></div>
+      <sc-for list="{{ savedShort }}" as="r" hint-placeholder-count="3">
+        <button onClick="{{ r.onClick }}" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:9px;border:1px solid var(--line);background:var(--surf2);color:var(--ink);cursor:pointer;text-align:left" style-active="transform:scale(.97)"><span class="material-symbols-rounded" style="font-size:18px;color:#E85D3A;font-variation-settings:'FILL' 1">{{ r.icon }}</span><span style="flex:1;min-width:0"><span style="display:block;font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.label }}</span><span style="display:block;font-size:12px;color:var(--ink2)">{{ r.when }}</span></span></button>
+      </sc-for>
+    </div>
+    <div style="background:var(--surf);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;align-items:center;justify-content:space-between"><span style="display:inline-flex;background:var(--ink);color:var(--surf);padding:4px 8px;border-radius:6px;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase">Reports</span><button onClick="{{ goReports }}" style="border:0;background:none;color:var(--ink2);font-weight:700;font-size:13.5px;cursor:pointer">All</button></div>
+      <sc-for list="{{ repPreview }}" as="r" hint-placeholder-count="3">
+        <div style="display:flex;gap:10px;align-items:flex-start"><span style="width:30px;height:30px;border-radius:7px;background:{{ r.c }};color:#fff;display:grid;place-items:center;flex:none"><span class="material-symbols-rounded" style="font-size:17px">{{ r.icon }}</span></span><div style="min-width:0"><div style="font-size:14px;font-weight:700">{{ r.label }} at {{ r.stopName }}</div><div style="font-size:12px;color:var(--ink3);font-family:'DM Mono',monospace">{{ r.ago }}</div></div></div>
+      </sc-for>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isRoutes }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:14px;animation:rwIn .45s ease both">
+  <div style="display:flex;align-items:center;gap:12px">
+    <button onClick="{{ goHome }}" aria-label="Back to dashboard" style="width:42px;height:42px;border-radius:10px;border:1px solid var(--line);background:var(--surf);color:var(--ink);display:grid;place-items:center;cursor:pointer;flex:none"><span class="material-symbols-rounded" style="font-size:22px">arrow_back</span></button>
+    <div style="min-width:0">
+      <div style="font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2)">{{ whenLabel }} · {{ clockStr }} · 4 options</div>
+      <div style="font-size:26px;font-weight:800;letter-spacing:-.03em;line-height:1.1;display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span>{{ origin }}</span><span class="material-symbols-rounded" style="font-size:24px;color:#E85D3A">arrow_forward</span><span>{{ dest }}</span></div>
+    </div>
+  </div>
+  <div style="display:flex;gap:6px;flex-wrap:wrap">
+    <sc-for list="{{ conditions }}" as="c" hint-placeholder-count="3"><span style="height:30px;padding:0 10px;border-radius:7px;background:{{ c.bg }};color:{{ c.fg }};display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700"><span class="material-symbols-rounded" style="font-size:17px;font-variation-settings:'FILL' 1">{{ c.icon }}</span>{{ c.text }}</span></sc-for>
+  </div>
+  <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+    <span style="font-size:13px;color:var(--ink3);margin-right:2px">Sort by</span>
+    <sc-for list="{{ sortOpts }}" as="o" hint-placeholder-count="5"><button onClick="{{ o.onClick }}" aria-pressed="{{ o.on }}" style="height:34px;padding:0 12px;border-radius:8px;border:1.5px solid {{ o.bd }};background:{{ o.bg }};color:{{ o.fg }};font-size:13.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .2s" style-active="transform:scale(.94)"><span class="material-symbols-rounded" style="font-size:16px">{{ o.icon }}</span>{{ o.label }}</button></sc-for>
+  </div>
+  <div style="font-size:13px;color:var(--ink2);display:flex;align-items:center;gap:6px"><span class="material-symbols-rounded" style="font-size:17px">drag_indicator</span>Drag cards to set your own priority · pin to keep on top · hover to trace on map</div>
+  <sc-if value="{{ a11y }}"><div style="display:flex;gap:8px;align-items:flex-start;padding:9px 12px;border:1.5px dashed #2E6BD8;border-radius:8px;background:#EAF0FC;color:#0B2A66;font-size:13px;line-height:1.45"><span class="material-symbols-rounded" style="font-size:18px">accessibility_new</span><span>Drag has a keyboard twin: the ↑ ↓ buttons on each card. Rain exposure uses drop count + text label, so it reads without colour. Cards get focus outlines and announce rank.</span></div></sc-if>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:12px">
+    <sc-for list="{{ cards }}" as="r" hint-placeholder-count="4">
+      <article data-rcard="{{ r.id }}" draggable="true" onDragStart="{{ r.onDragStart }}" onDragOver="{{ r.onDragOver }}" onDrop="{{ r.onDrop }}" onDragEnd="{{ r.onDragEnd }}" onMouseEnter="{{ r.onEnter }}" onMouseLeave="{{ r.onLeave }}" aria-label="{{ r.aria }}" style="background:var(--surf);border:2px solid {{ r.bd }};border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:12px;cursor:grab;opacity:{{ r.op }};box-shadow:{{ r.sh }};transition:box-shadow .2s,border-color .2s,opacity .2s;position:relative">
+        <div style="display:flex;align-items:center;gap:6px">
+          <span class="material-symbols-rounded" style="font-size:20px;color:var(--ink3)">drag_indicator</span>
+          <span style="font-family:'DM Mono',monospace;font-size:13px;font-weight:500;color:var(--ink2)">{{ r.rank }}</span>
+          <div style="display:flex;gap:4px;flex-wrap:wrap;flex:1">
+            <sc-for list="{{ r.badges }}" as="b"><span style="font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:3px 6px;border-radius:5px;background:{{ b.bg }};color:{{ b.fg }}">{{ b.label }}</span></sc-for>
+          </div>
+          <button onClick="{{ r.onPin }}" aria-pressed="{{ r.pinned }}" aria-label="Pin route" style="width:34px;height:34px;border-radius:8px;border:1px solid var(--line);background:{{ r.pinBg }};color:{{ r.pinFg }};display:grid;place-items:center;cursor:pointer;transition:all .2s" style-active="transform:scale(.85)"><span class="material-symbols-rounded" style="font-size:18px;font-variation-settings:'FILL' {{ r.pinFill }}">push_pin</span></button>
+        </div>
+        <div>
+          <div style="display:flex;align-items:baseline;gap:6px"><span style="font-size:40px;font-weight:800;letter-spacing:-.04em;line-height:1">{{ r.dur }}</span><span style="font-size:16px;font-weight:700">min</span><span style="flex:1"></span><span style="font-family:'DM Mono',monospace;font-size:13px;color:var(--ink2)">Arr {{ r.arrive }}</span></div>
+          <div style="font-weight:800;font-size:15px;margin-top:4px">{{ r.name }}</div>
+          <div style="font-size:12.5px;color:var(--ink2)">{{ r.via }}</div>
+        </div>
+        <div style="display:flex;gap:3px">
+          <sc-for list="{{ r.legs }}" as="l"><div style="flex-grow:{{ l.grow }};flex-basis:0;min-width:34px;height:28px;border-radius:6px;background:{{ l.bg }};color:{{ l.fg }};border:1.5px {{ l.bs }} {{ l.bd }};display:flex;align-items:center;justify-content:center;gap:2px;font-size:12px;font-weight:800"><span class="material-symbols-rounded" style="font-size:15px">{{ l.icon }}</span>{{ l.text }}</div></sc-for>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
+          <div><div style="font-size:11px;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;font-weight:700">Transfers</div><div style="font-weight:800;font-size:15px">{{ r.tr }}</div></div>
+          <div><div style="font-size:11px;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;font-weight:700">Walk</div><div style="font-weight:800;font-size:15px">{{ r.walk }}</div></div>
+          <div><div style="font-size:11px;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;font-weight:700">Fare</div><div style="font-weight:800;font-size:15px">{{ r.fare }}</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;background:var(--surf2)">
+          <span style="width:7px;height:7px;border-radius:50%;background:#009645;animation:rwBlink 1.4s infinite;flex:none"></span>
+          <span style="font-size:13px;font-weight:700;flex:1">{{ r.nextLabel }}</span>
+          <span style="font-family:'DM Mono',monospace;font-size:14px;font-weight:500">{{ r.nextT }}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <div style="display:flex;gap:0" aria-hidden="true"><sc-for list="{{ r.drops }}" as="d"><span class="material-symbols-rounded" style="font-size:18px;color:{{ d.c }};font-variation-settings:'FILL' 1">water_drop</span></sc-for></div>
+          <span style="font-size:13px;font-weight:700">{{ r.expLabel }}</span>
+          <span style="flex:1"></span>
+          <span style="font-size:12px;font-weight:800;padding:4px 8px;border-radius:6px;background:{{ r.comfBg }};color:{{ r.comfFg }}">{{ r.comfort }}</span>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;border-top:1px solid var(--line);padding-top:10px">
+          <button onClick="{{ r.onUp }}" aria-label="Move up" style="width:34px;height:34px;border-radius:8px;border:1px solid var(--line);background:var(--surf);color:var(--ink);display:grid;place-items:center;cursor:pointer"><span class="material-symbols-rounded" style="font-size:18px">arrow_upward</span></button>
+          <button onClick="{{ r.onDown }}" aria-label="Move down" style="width:34px;height:34px;border-radius:8px;border:1px solid var(--line);background:var(--surf);color:var(--ink);display:grid;place-items:center;cursor:pointer"><span class="material-symbols-rounded" style="font-size:18px">arrow_downward</span></button>
+          <span style="flex:1"></span>
+          <button onClick="{{ r.onMap }}" style="height:36px;padding:0 12px;border-radius:8px;border:0;background:var(--ink);color:var(--surf);font-weight:800;font-size:13.5px;display:flex;align-items:center;gap:6px;cursor:pointer" style-active="transform:scale(.95)"><span class="material-symbols-rounded" style="font-size:18px">map</span>View on map</button>
+        </div>
+      </article>
+    </sc-for>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isMap }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:14px;animation:rwIn .45s ease both">
+  <div>
+    <div style="font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2)">Central Singapore · {{ clockStr }}</div>
+    <h1 style="margin:4px 0 0;font-size:30px;font-weight:800;letter-spacing:-.035em">Map</h1>
+  </div>
+  <div style="display:flex;gap:6px;flex-wrap:wrap">
+    <sc-for list="{{ layerChips }}" as="c" hint-placeholder-count="4"><button onClick="{{ c.onClick }}" aria-pressed="{{ c.on }}" style="height:34px;padding:0 11px;border-radius:8px;border:1.5px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }};font-size:13.5px;font-weight:700;display:flex;align-items:center;gap:6px;cursor:pointer;transition:all .2s" style-active="transform:scale(.94)"><span class="material-symbols-rounded" style="font-size:17px">{{ c.icon }}</span>{{ c.label }}</button></sc-for>
+  </div>
+  <div>
+    <div style="font-size:12px;color:var(--ink3);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Route overlay · {{ origin }} → {{ dest }}</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ routeChips }}" as="c" hint-placeholder-count="4"><button onClick="{{ c.onClick }}" style="height:32px;padding:0 10px;border-radius:7px;border:1px solid var(--line);background:{{ c.bg }};color:{{ c.fg }};font-size:13px;font-weight:700;cursor:pointer">{{ c.name }}</button></sc-for></div>
+  </div>
+
+  <sc-if value="{{ hasStop }}">
+    <div key="{{ stopKey }}" style="background:var(--surf);border:1px solid var(--line);border-radius:12px;overflow:hidden;animation:rwSlide .4s cubic-bezier(.2,.8,.2,1) both">
+      <div style="background:var(--ink);color:var(--surf);padding:14px 16px;display:flex;gap:12px;align-items:flex-start">
+        <span style="width:44px;height:44px;border-radius:10px;background:#E85D3A;color:#111;display:grid;place-items:center;flex:none"><span class="material-symbols-rounded" style="font-size:26px;font-variation-settings:'FILL' 1">{{ sd.kindIcon }}</span></span>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:21px;font-weight:800;letter-spacing:-.02em;line-height:1.15">{{ sd.name }}</div>
+          <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:5px;align-items:center"><span style="font-size:12px;opacity:.75;margin-right:4px">{{ sd.kindLabel }}</span><sc-for list="{{ sd.chips }}" as="c"><span style="font-size:11px;font-weight:800;padding:2px 5px;border-radius:4px;background:{{ c.bg }};color:{{ c.fg }};font-family:'DM Mono',monospace">{{ c.t }}</span></sc-for></div>
+        </div>
+        <button onClick="{{ closeStop }}" aria-label="Close stop details" style="width:34px;height:34px;border-radius:8px;border:1px solid rgba(127,127,127,.4);background:transparent;color:inherit;display:grid;place-items:center;cursor:pointer"><span class="material-symbols-rounded" style="font-size:20px">close</span></button>
+      </div>
+      <div style="padding:14px 16px;display:flex;flex-direction:column;gap:14px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div style="padding:10px;border-radius:9px;background:{{ sd.wxBg }};color:{{ sd.wxFg }}"><div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;opacity:.8">Weather here</div><div style="display:flex;align-items:center;gap:6px;font-weight:800;font-size:15px;margin-top:3px"><span class="material-symbols-rounded" style="font-size:20px;font-variation-settings:'FILL' 1">{{ sd.wxIcon }}</span>{{ sd.wxLabel }}</div></div>
+          <div style="padding:10px;border-radius:9px;background:{{ sd.shBg }};color:{{ sd.shFg }}"><div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;opacity:.8">Shelter</div><div style="display:flex;align-items:center;gap:6px;font-weight:800;font-size:15px;margin-top:3px"><span class="material-symbols-rounded" style="font-size:20px">{{ sd.shIcon }}</span>{{ sd.shLabel }}</div></div>
+        </div>
+        <div style="font-size:13.5px;color:var(--ink2);line-height:1.45;text-wrap:pretty">{{ sd.note }}</div>
+        <div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px"><span style="width:7px;height:7px;border-radius:50%;background:#009645;animation:rwBlink 1.4s infinite"></span>Live arrivals</div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <sc-for list="{{ sd.arr }}" as="a"><div style="display:grid;grid-template-columns:48px minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:8px 10px;border-radius:8px;background:var(--surf2)"><span style="font-size:13px;font-weight:800;padding:3px 0;text-align:center;border-radius:5px;background:{{ a.bg }};color:{{ a.fg }}">{{ a.svc }}</span><span style="min-width:0"><span style="display:block;font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ a.d }}</span><span style="display:flex;align-items:center;gap:4px;font-size:11.5px;color:var(--ink2)"><span style="width:6px;height:6px;border-radius:50%;background:{{ a.loadC }}"></span>{{ a.load }}</span></span><span style="font-family:'DM Mono',monospace;font-weight:500;font-size:15px;color:{{ a.tc }};animation:{{ a.anim }}">{{ a.t }}</span><span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--ink3)">{{ a.t2 }}</span></div></sc-for>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Recent reports</div>
+          <sc-if value="{{ sd.hasReps }}">
+            <div style="display:flex;flex-direction:column;gap:6px"><sc-for list="{{ sd.reps }}" as="r"><div style="display:flex;gap:8px;align-items:flex-start;animation:{{ r.anim }};padding:4px;border-radius:8px"><span style="width:26px;height:26px;border-radius:6px;background:{{ r.c }};color:#fff;display:grid;place-items:center;flex:none"><span class="material-symbols-rounded" style="font-size:15px">{{ r.icon }}</span></span><div><div style="font-size:13.5px;font-weight:700">{{ r.label }} <span style="font-weight:400;color:var(--ink3);font-family:'DM Mono',monospace;font-size:12px">· {{ r.ago }}</span></div><div style="font-size:13px;color:var(--ink2)">{{ r.note }}</div></div></div></sc-for></div>
+          </sc-if>
+          <sc-if value="{{ sd.noReps }}"><div style="font-size:13.5px;color:var(--ink2);padding:10px;border-radius:8px;border:1px dashed var(--line)">No reports in the last hour. Be the first one!</div></sc-if>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Quick report · one tap</div>
+          <div style="display:flex;gap:5px;flex-wrap:wrap"><sc-for list="{{ sd.quick }}" as="q"><button onClick="{{ q.onClick }}" style="height:32px;padding:0 9px;border-radius:7px;border:1px solid var(--line);background:var(--surf);color:var(--ink);font-size:12.5px;font-weight:700;display:flex;align-items:center;gap:5px;cursor:pointer" style-active="transform:scale(.9)"><span class="material-symbols-rounded" style="font-size:16px;color:{{ q.c }}">{{ q.icon }}</span>{{ q.label }}</button></sc-for></div>
+        </div>
+        <button onClick="{{ sd.onPlan }}" style="height:44px;border-radius:10px;border:0;background:#E85D3A;color:#111;font-weight:800;font-size:15px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer" style-active="transform:scale(.97)"><span class="material-symbols-rounded" style="font-size:20px">trip_origin</span>Plan from here</button>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ noStop }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;align-items:center;gap:10px;padding:12px;border-radius:10px;border:1.5px dashed var(--ink3);color:var(--ink2);font-size:14px"><span class="material-symbols-rounded" style="font-size:22px;color:#E85D3A">touch_app</span>Tap a pin on the map — or pick a stop below — to see live arrivals, shelter, weather and reports.</div>
+      <label style="display:flex;align-items:center;gap:8px;height:44px;padding:0 12px;border-radius:10px;border:1px solid var(--line);background:var(--surf)"><span class="material-symbols-rounded" style="font-size:20px;color:var(--ink3)">search</span><input value="{{ stopQ }}" onChange="{{ onStopQ }}" placeholder="Search stops or stations" aria-label="Search stops" style="flex:1;border:0;background:transparent;outline:none;font-size:15px;color:var(--ink);min-width:0"></label>
+      <sc-for list="{{ stopList }}" as="n" hint-placeholder-count="6">
+        <button onClick="{{ n.onClick }}" style="display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--surf);color:var(--ink);cursor:pointer;text-align:left" style-hover="border-color:var(--ink3)" style-active="transform:scale(.98)">
+          <span class="material-symbols-rounded" style="font-size:20px;color:var(--ink2)">{{ n.kindIcon }}</span>
+          <span style="flex:1;min-width:0;display:flex;align-items:center;gap:6px;flex-wrap:wrap"><span style="font-weight:700;font-size:14.5px">{{ n.name }}</span><sc-for list="{{ n.chips }}" as="c"><span style="font-size:10.5px;font-weight:800;padding:2px 4px;border-radius:4px;background:{{ c.bg }};color:{{ c.fg }};font-family:'DM Mono',monospace">{{ c.t }}</span></sc-for></span>
+          <span style="display:flex;align-items:center;gap:3px;font-size:12px;color:{{ n.wxC }}"><span class="material-symbols-rounded" style="font-size:16px">{{ n.wxIcon }}</span>{{ n.wxLabel }}</span>
+        </button>
+      </sc-for>
+    </div>
+  </sc-if>
+  <sc-if value="{{ a11y }}"><div style="display:flex;gap:8px;align-items:flex-start;padding:9px 12px;border:1.5px dashed #2E6BD8;border-radius:8px;background:#EAF0FC;color:#0B2A66;font-size:13px;line-height:1.45"><span class="material-symbols-rounded" style="font-size:18px">accessibility_new</span><span>Every map pin is a focusable button (Tab + Enter). This side list is the non-visual twin of the map. Walking legs are dotted, transit solid — shape, not just colour.</span></div></sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ isSaved }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:1200px;margin:0 auto;display:flex;flex-direction:column;gap:20px;animation:rwIn .45s ease both">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap">
+    <div><div style="font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2)">For habitual trips</div><h1 style="margin:4px 0 0;font-size:32px;font-weight:800;letter-spacing:-.035em">Saved routes &amp; alerts</h1></div>
+    <div style="font-size:14px;color:var(--ink2)">{{ alertSummary }}</div>
+  </div>
+  <div style="display:grid;grid-template-columns:{{ savedCols }};gap:20px;align-items:start">
+    <section style="display:flex;flex-direction:column;gap:10px">
+      <span style="align-self:flex-start;display:inline-flex;background:var(--ink);color:var(--surf);padding:4px 8px;border-radius:6px;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase">Forecast alerts</span>
+      <sc-for list="{{ alerts }}" as="a" hint-placeholder-count="3">
+        <div style="background:var(--surf);border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px;animation:rwUp .4s ease both">
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <span style="width:40px;height:40px;border-radius:9px;background:{{ a.bg }};color:{{ a.fg }};display:grid;place-items:center;flex:none"><span class="material-symbols-rounded" style="font-size:22px;font-variation-settings:'FILL' 1">{{ a.icon }}</span></span>
+            <div style="flex:1;min-width:0"><div style="font-size:11.5px;font-family:'DM Mono',monospace;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em">{{ a.when }}</div><div style="font-weight:800;font-size:16px;line-height:1.25;margin-top:2px;text-wrap:pretty">{{ a.title }}</div></div>
+            <button onClick="{{ a.onDismiss }}" aria-label="Dismiss alert" style="width:30px;height:30px;border-radius:7px;border:0;background:transparent;color:var(--ink3);display:grid;place-items:center;cursor:pointer"><span class="material-symbols-rounded" style="font-size:19px">close</span></button>
+          </div>
+          <div style="font-size:14px;color:var(--ink2);line-height:1.45;text-wrap:pretty">{{ a.body }}</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap"><button onClick="{{ a.onAct }}" style="height:36px;padding:0 12px;border-radius:8px;border:0;background:var(--ink);color:var(--surf);font-weight:800;font-size:13.5px;cursor:pointer" style-active="transform:scale(.95)">{{ a.act }}</button><button onClick="{{ a.onView }}" style="height:36px;padding:0 12px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--ink);font-weight:700;font-size:13.5px;cursor:pointer">View route</button></div>
+        </div>
+      </sc-for>
+      <sc-if value="{{ noAlerts }}">
+        <div style="border:1.5px dashed var(--ink3);border-radius:12px;padding:22px;display:flex;flex-direction:column;align-items:flex-start;gap:8px;animation:rwUp .4s ease both"><span class="material-symbols-rounded" style="font-size:32px;color:#009645">notifications_paused</span><div style="font-weight:800;font-size:17px">All clear, no alerts</div><div style="font-size:14px;color:var(--ink2)">We'll nudge you if rain heads for one of your usual trips.</div><button onClick="{{ restoreAlerts }}" style="height:34px;padding:0 12px;border-radius:8px;border:1px solid var(--line);background:var(--surf);color:var(--ink);font-weight:700;font-size:13px;cursor:pointer">Restore demo alerts</button></div>
+      </sc-if>
+    </section>
+    <section style="display:flex;flex-direction:column;gap:10px">
+      <span style="align-self:flex-start;display:inline-flex;background:var(--ink);color:var(--surf);padding:4px 8px;border-radius:6px;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase">Your routes</span>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,270px),1fr));gap:12px">
+        <sc-for list="{{ savedView }}" as="r" hint-placeholder-count="4">
+          <div style="background:var(--surf);border:2px solid {{ r.bd }};border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px;transition:border-color .2s">
+            <div style="display:flex;align-items:flex-start;gap:8px">
+              <div style="flex:1;min-width:0"><div style="font-size:12px;color:var(--ink3);font-weight:700;text-transform:uppercase;letter-spacing:.06em">{{ r.name }}</div><div style="font-weight:800;font-size:17px;line-height:1.2;margin-top:2px">{{ r.from }} <span style="color:#E85D3A">→</span> {{ r.to }}</div></div>
+              <button onClick="{{ r.onPin }}" aria-pressed="{{ r.pinned }}" aria-label="Pin favourite" style="width:34px;height:34px;border-radius:8px;border:1px solid var(--line);background:{{ r.pinBg }};color:{{ r.pinFg }};display:grid;place-items:center;cursor:pointer;flex:none" style-active="transform:scale(.8) rotate(-20deg)"><span class="material-symbols-rounded" style="font-size:18px;font-variation-settings:'FILL' {{ r.pinFill }}">push_pin</span></button>
+            </div>
+            <div style="display:flex;gap:4px;align-items:center"><sc-for list="{{ r.legs }}" as="l"><span style="height:24px;min-width:30px;padding:0 6px;border-radius:5px;background:{{ l.bg }};color:{{ l.fg }};display:inline-flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:800"><span class="material-symbols-rounded" style="font-size:14px">{{ l.icon }}</span>{{ l.text }}</span></sc-for><span style="flex:1"></span><span style="font-weight:800;font-size:15px">{{ r.dur }}</span></div>
+            <div style="display:flex;justify-content:space-between;gap:8px;font-size:13px;color:var(--ink2)"><span style="display:flex;align-items:center;gap:4px"><span class="material-symbols-rounded" style="font-size:16px">schedule</span>{{ r.when }}</span></div>
+            <div style="display:flex;align-items:center;gap:6px;padding:7px 9px;border-radius:8px;background:{{ r.fcBg }};color:{{ r.fcFg }};font-size:13px;font-weight:700"><span class="material-symbols-rounded" style="font-size:17px;font-variation-settings:'FILL' 1">{{ r.fcIcon }}</span>{{ r.fc }}</div>
+            <div style="display:flex;align-items:center;gap:8px;border-top:1px solid var(--line);padding-top:10px">
+              <button role="switch" aria-checked="{{ r.alertOn }}" onClick="{{ r.onAlert }}" aria-label="Weather alerts" style="width:42px;height:24px;border-radius:12px;border:0;background:{{ r.trackBg }};position:relative;cursor:pointer;transition:background .2s;flex:none"><span style="position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transform:{{ r.knob }};transition:transform .25s cubic-bezier(.3,1.4,.5,1);box-shadow:0 1px 2px rgba(0,0,0,.3)"></span></button>
+              <span style="font-size:13px;font-weight:600;color:var(--ink2)">Rain alerts</span>
+              <span style="flex:1"></span>
+              <button onClick="{{ r.onPlan }}" style="height:34px;padding:0 12px;border-radius:8px;border:0;background:#E85D3A;color:#111;font-weight:800;font-size:13px;cursor:pointer" style-active="transform:scale(.95)">Plan</button>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isReports }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:1200px;margin:0 auto;display:flex;flex-direction:column;gap:18px;animation:rwIn .45s ease both">
+  <div><div style="font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2)">From commuters on the ground</div><h1 style="margin:4px 0 0;font-size:32px;font-weight:800;letter-spacing:-.035em">Community reports</h1></div>
+  <div style="display:grid;grid-template-columns:{{ repCols }};gap:20px;align-items:start">
+    <div style="display:flex;flex-direction:column;gap:14px;position:{{ repSticky }};top:84px">
+      <div style="background:var(--surf);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px">
+        <span style="align-self:flex-start;display:inline-flex;background:var(--ink);color:var(--surf);padding:4px 8px;border-radius:6px;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase">Quick report</span>
+        <div style="font-size:13px;font-weight:700;color:var(--ink2)">1 · Where are you?</div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap"><sc-for list="{{ placeChips }}" as="p" hint-placeholder-count="8"><button onClick="{{ p.onClick }}" aria-pressed="{{ p.on }}" style="height:30px;padding:0 9px;border-radius:7px;border:1px solid {{ p.bd }};background:{{ p.bg }};color:{{ p.fg }};font-size:12.5px;font-weight:700;cursor:pointer;transition:all .15s">{{ p.name }}</button></sc-for></div>
+        <div style="font-size:13px;font-weight:700;color:var(--ink2)">2 · What's it like? Tap to post.</div>
+        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px">
+          <sc-for list="{{ typeBtns }}" as="t" hint-placeholder-count="6"><button onClick="{{ t.onClick }}" style="height:64px;border-radius:10px;border:1px solid var(--line);background:var(--surf2);color:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:12.5px;font-weight:800;cursor:pointer;transition:transform .12s" style-active="transform:scale(.9)"><span style="width:28px;height:28px;border-radius:7px;background:{{ t.c }};color:#fff;display:grid;place-items:center"><span class="material-symbols-rounded" style="font-size:17px">{{ t.icon }}</span></span>{{ t.label }}</button></sc-for>
+        </div>
+        <sc-if value="{{ a11y }}"><div style="display:flex;gap:8px;align-items:flex-start;padding:9px 12px;border:1.5px dashed #2E6BD8;border-radius:8px;background:#EAF0FC;color:#0B2A66;font-size:13px;line-height:1.45"><span class="material-symbols-rounded" style="font-size:18px">accessibility_new</span><span>Location chips are toggle buttons (aria-pressed). Report types have text labels + icon; targets are 64px tall. Posting confirms via a polite toast.</span></div></sc-if>
+      </div>
+      <div style="background:var(--surf);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:8px">
+        <div style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.06em">Hotspots · last hour</div>
+        <sc-for list="{{ hotspots }}" as="h" hint-placeholder-count="3"><div style="display:flex;align-items:center;gap:8px;font-size:14px"><span style="font-weight:700;flex:1">{{ h.name }}</span><span style="font-family:'DM Mono',monospace;color:var(--ink2);font-size:13px">{{ h.n }}</span></div></sc-for>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;min-width:0">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <label style="flex:1 1 220px;display:flex;align-items:center;gap:8px;height:42px;padding:0 12px;border-radius:10px;border:1px solid var(--line);background:var(--surf)"><span class="material-symbols-rounded" style="font-size:20px;color:var(--ink3)">search</span><input value="{{ rQ }}" onChange="{{ onRQ }}" placeholder="Search stop, station or note" aria-label="Search reports" style="flex:1;border:0;background:transparent;outline:none;font-size:15px;color:var(--ink);min-width:0"></label>
+        <div style="display:flex;gap:2px;padding:3px;border-radius:10px;background:var(--chip)"><sc-for list="{{ sortRep }}" as="o" hint-placeholder-count="3"><button onClick="{{ o.onClick }}" aria-pressed="{{ o.on }}" style="height:34px;padding:0 10px;border-radius:8px;border:0;background:{{ o.bg }};color:{{ o.fg }};box-shadow:{{ o.sh }};font-size:13px;font-weight:700;cursor:pointer">{{ o.label }}</button></sc-for></div>
+      </div>
+      <div style="display:flex;gap:5px;flex-wrap:wrap"><sc-for list="{{ filterChips }}" as="f" hint-placeholder-count="7"><button onClick="{{ f.onClick }}" aria-pressed="{{ f.on }}" style="height:32px;padding:0 10px;border-radius:7px;border:1.5px solid {{ f.bd }};background:{{ f.bg }};color:{{ f.fg }};font-size:13px;font-weight:700;display:flex;align-items:center;gap:5px;cursor:pointer;transition:all .15s"><span style="width:8px;height:8px;border-radius:2px;background:{{ f.c }}"></span>{{ f.label }}<span style="font-family:'DM Mono',monospace;font-size:11.5px;opacity:.7">{{ f.n }}</span></button></sc-for></div>
+      <sc-for list="{{ feed }}" as="r" hint-placeholder-count="6">
+        <div style="display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:12px;align-items:start;padding:14px;background:var(--surf);border:1px solid var(--line);border-radius:12px;animation:{{ r.anim }}">
+          <span style="width:44px;height:44px;border-radius:10px;background:{{ r.c }};color:#fff;display:grid;place-items:center"><span class="material-symbols-rounded" style="font-size:24px">{{ r.icon }}</span></span>
+          <div style="min-width:0">
+            <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><span style="font-weight:800;font-size:16px">{{ r.label }}</span><span style="font-size:14px;color:var(--ink3)">at</span><span style="font-weight:700;font-size:15px">{{ r.stopName }}</span><sc-for list="{{ r.chips }}" as="c"><span style="font-size:10.5px;font-weight:800;padding:2px 4px;border-radius:4px;background:{{ c.bg }};color:{{ c.fg }};font-family:'DM Mono',monospace">{{ c.t }}</span></sc-for><sc-if value="{{ r.mine }}"><span style="font-size:10.5px;font-weight:800;padding:2px 5px;border-radius:4px;background:#E85D3A;color:#111">YOU</span></sc-if></div>
+            <sc-if value="{{ r.hasNote }}"><div style="font-size:14px;color:var(--ink2);margin-top:3px;text-wrap:pretty">{{ r.note }}</div></sc-if>
+            <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--ink3);margin-top:5px">{{ r.ago }} · {{ r.cText }}</div>
+          </div>
+          <button onClick="{{ r.onConfirm }}" aria-pressed="{{ r.conf }}" aria-label="Still true" style="height:36px;padding:0 10px;border-radius:8px;border:1px solid var(--line);background:{{ r.cBg }};color:{{ r.cFg }};display:flex;align-items:center;gap:5px;font-weight:800;font-size:13px;cursor:pointer;transition:all .15s" style-active="transform:scale(.88)"><span class="material-symbols-rounded" style="font-size:17px;font-variation-settings:'FILL' {{ r.cFill }}">thumb_up</span>{{ r.confirms }}</button>
+        </div>
+      </sc-for>
+      <sc-if value="{{ feedEmpty }}">
+        <div style="border:1.5px dashed var(--ink3);border-radius:12px;padding:28px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center"><span class="material-symbols-rounded" style="font-size:34px;color:var(--ink3)">search_off</span><div style="font-weight:800;font-size:17px">Nothing matches leh</div><div style="font-size:14px;color:var(--ink2)">Try another stop name, or clear the filter.</div><button onClick="{{ clearRepFilter }}" style="height:34px;padding:0 12px;border-radius:8px;border:1px solid var(--line);background:var(--surf);color:var(--ink);font-weight:700;font-size:13px;cursor:pointer">Clear filters</button></div>
+      </sc-if>
+    </div>
+  </div>
+</div>
+</sc-if>
+</div>
+
+<sc-if value="{{ showMap }}" hint-placeholder-val="{{ true }}">
+<div style="flex:1 1 0;min-width:0;width:100%;order:{{ mapOrder }};position:{{ mapPos }};top:64px;height:{{ mapH }};padding:{{ mapPad }}">
+  <div style="position:relative;width:100%;height:100%;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:var(--land);transition:background .8s">
+    <svg viewBox="0 0 1000 640" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%;display:block;font-family:'DM Sans',sans-serif">
+      <g style="transform:{{ mapTf }};transition:transform .7s cubic-bezier(.2,.8,.2,1)">
+        <rect x="-400" y="-400" width="1800" height="1440" style="fill:var(--land);transition:fill .8s"></rect>
+        <ellipse cx="330" cy="80" rx="70" ry="40" style="fill:var(--park)"></ellipse>
+        <ellipse cx="575" cy="252" rx="32" ry="20" style="fill:var(--park)"></ellipse>
+        <ellipse cx="245" cy="500" rx="50" ry="26" style="fill:var(--park)"></ellipse>
+        <ellipse cx="905" cy="380" rx="55" ry="30" style="fill:var(--park)"></ellipse>
+        <path d="M-400,470 L0,470 C80,480 140,520 200,560 C240,590 300,602 360,592 C420,578 470,522 540,497 C600,476 640,481 690,471 L702,420 C690,380 700,340 740,320 C780,300 822,310 842,350 C862,392 882,420 942,410 L1400,400 L1400,1040 L-400,1040 Z" style="fill:var(--sea);transition:fill .8s"></path>
+        <ellipse cx="290" cy="648" rx="150" ry="34" style="fill:var(--land)"></ellipse>
+        <path d="M470,332 C520,322 560,300 600,330 C630,350 660,342 702,334" fill="none" style="stroke:var(--sea);stroke-width:7px;stroke-linecap:round"></path>
+        <g fill="none" style="stroke:var(--road);stroke-width:6px;stroke-linecap:round;stroke-linejoin:round">
+          <polyline points="250,105 411,132 489,170 567,184 610,208 700,248"></polyline>
+          <polyline points="590,110 692,166 760,210"></polyline>
+          <polyline points="660,262 596,324 544,358 489,397 400,468 300,520 200,548"></polyline>
+          <polyline points="567,441 450,500 340,570"></polyline>
+          <polyline points="735,256 850,300 1100,322"></polyline>
+          <polyline points="-100,410 200,468"></polyline>
+          <polyline points="478,-50 478,120 489,170"></polyline>
+        </g>
+        <g style="fill:var(--ink3);font-size:13px;font-weight:800;letter-spacing:.2em;opacity:.55">
+          <text x="300" y="168">ORCHARD</text><text x="720" y="128">BUGIS</text><text x="760" y="372">MARINA BAY</text><text x="360" y="352">TIONG BAHRU</text><text x="240" y="640">SENTOSA</text><text x="690" y="298">CIVIC DISTRICT</text>
+        </g>
+        <sc-if value="{{ showZones }}">
+          <sc-for list="{{ zones }}" as="z">
+            <g style="animation:rwDrift 12s ease-in-out infinite">
+              <circle cx="{{ z.x }}" cy="{{ z.y }}" r="{{ z.r }}" style="fill:var(--rain);opacity:{{ z.o1 }};transform-box:fill-box;transform-origin:center;animation:rwBreath 6s ease-in-out infinite;transition:opacity .8s"></circle>
+              <circle cx="{{ z.x }}" cy="{{ z.y }}" r="{{ z.r2 }}" style="fill:var(--rain);opacity:{{ z.o2 }};transform-box:fill-box;transform-origin:center;animation:rwBreath 4s ease-in-out infinite"></circle>
+              <circle cx="{{ z.x }}" cy="{{ z.y }}" r="{{ z.r }}" fill="none" style="stroke:var(--rain);stroke-width:1.5px;stroke-dasharray:4 7;opacity:.7"></circle>
+              <rect x="{{ z.lx }}" y="{{ z.ly }}" width="{{ z.lw }}" height="26" rx="6" style="fill:var(--rain)"></rect>
+              <text x="{{ z.tx }}" y="{{ z.ty }}" style="fill:#fff;font-size:13px;font-weight:800">{{ z.label }}</text>
+            </g>
+          </sc-for>
+        </sc-if>
+        <sc-if value="{{ showMrt }}" hint-placeholder-val="{{ true }}">
+          <g fill="none" style="stroke-width:6px;stroke-linecap:round;stroke-linejoin:round;opacity:{{ lineOp }};transition:opacity .3s">
+            <polyline points="478,-60 478,33 411,132 489,177 567,188 633,254 622,353 656,441 690,540" style="stroke:#D42E12"></polyline>
+            <polyline points="1100,70 780,130 678,177 633,254 622,353 567,441 489,397 400,392 -100,380" style="stroke:#009645"></polyline>
+            <polyline points="640,-60 600,99 567,188 578,309 544,353 489,397 300,563" style="stroke:#9900AA"></polyline>
+            <polyline points="567,188 622,205 675,248 733,254 800,215 1100,190" style="stroke:#FA9E0D"></polyline>
+            <polyline points="300,563 167,508 78,486 -100,430" style="stroke:#FA9E0D"></polyline>
+            <polyline points="540,-60 600,99 678,177 733,254 760,330 700,385" style="stroke:#005EC4"></polyline>
+          </g>
+          <g style="fill:var(--surf);stroke:var(--ink);stroke-width:2px;opacity:{{ lineOp }}">
+            <circle cx="478" cy="33" r="5"></circle><circle cx="489" cy="177" r="5"></circle><circle cx="600" cy="99" r="5"></circle><circle cx="675" cy="248" r="5"></circle><circle cx="733" cy="254" r="5"></circle><circle cx="622" cy="353" r="5"></circle><circle cx="578" cy="309" r="5"></circle><circle cx="544" cy="353" r="5"></circle><circle cx="567" cy="441" r="5"></circle><circle cx="656" cy="441" r="5"></circle><circle cx="167" cy="508" r="5"></circle><circle cx="78" cy="486" r="5"></circle><circle cx="400" cy="392" r="5"></circle><circle cx="780" cy="130" r="5"></circle><circle cx="760" cy="330" r="5"></circle>
+          </g>
+          <g style="fill:var(--ink2);font-size:12px;font-weight:600;paint-order:stroke;stroke:var(--land);stroke-width:4px;stroke-linejoin:round">
+            <text x="490" y="30">Newton</text><text x="497" y="196">Somerset</text><text x="610" y="96">Little India</text><text x="686" y="268">Esplanade</text><text x="742" y="272">Promenade</text><text x="632" y="368">Raffles Place</text><text x="510" y="306">Clarke Quay</text><text x="480" y="350" style="text-anchor:end">Chinatown</text><text x="560" y="462" style="text-anchor:end">Tanjong Pagar</text><text x="668" y="458">Marina Bay</text><text x="160" y="528">Telok Blangah</text><text x="400" y="412">Tiong Bahru</text><text x="790" y="126">Lavender</text>
+          </g>
+        </sc-if>
+        <sc-for list="{{ faintSegs }}" as="g"><polyline points="{{ g.pts }}" fill="none" style="stroke:var(--ink3);stroke-width:4px;stroke-dasharray:{{ g.dash }};stroke-linecap:round;stroke-linejoin:round;opacity:.5"></polyline></sc-for>
+        <sc-for list="{{ routeSegs }}" as="g"><polyline points="{{ g.pts }}" fill="none" style="stroke:{{ g.casing }};stroke-width:{{ g.cw }};stroke-linecap:round;stroke-linejoin:round"></polyline></sc-for>
+        <sc-for list="{{ routeSegs }}" as="g"><polyline points="{{ g.pts }}" fill="none" style="stroke:{{ g.stroke }};stroke-width:{{ g.w }};stroke-dasharray:{{ g.dash }};stroke-linecap:round;stroke-linejoin:round"></polyline></sc-for>
+        <sc-for list="{{ flowSegs }}" as="g"><polyline points="{{ g.pts }}" fill="none" style="stroke:#fff;stroke-width:2.5px;stroke-dasharray:2 22;stroke-linecap:round;opacity:.85;animation:rwDash 1.4s linear infinite"></polyline></sc-for>
+        <sc-for list="{{ wetMarks }}" as="m">
+          <g><circle cx="{{ m.x }}" cy="{{ m.y }}" r="13" style="fill:var(--rain);stroke:var(--surf);stroke-width:3px"></circle><text x="{{ m.x }}" y="{{ m.ty }}" style="fill:#fff;font-family:'Material Symbols Rounded';font-size:16px;text-anchor:middle">rainy</text></g>
+        </sc-for>
+        <sc-for list="{{ mapStops }}" as="s">
+          <g onClick="{{ s.onClick }}" onKeyDown="{{ s.onKey }}" tabIndex="0" role="button" aria-label="{{ s.aria }}" style="cursor:pointer;outline:none">
+            <sc-if value="{{ s.sel }}"><circle cx="{{ s.x }}" cy="{{ s.y }}" r="14" style="fill:none;stroke:#E85D3A;stroke-width:3px;transform-box:fill-box;transform-origin:center;animation:rwRing 1.6s ease-out infinite"></circle></sc-if>
+            <circle cx="{{ s.x }}" cy="{{ s.y }}" r="20" style="fill:transparent"></circle>
+            <sc-if value="{{ s.isMrt }}"><circle cx="{{ s.x }}" cy="{{ s.y }}" r="{{ s.r }}" style="fill:var(--surf);stroke:{{ s.stroke }};stroke-width:3.5px;transition:stroke .2s"></circle></sc-if>
+            <sc-if value="{{ s.isBus }}"><rect x="{{ s.bx }}" y="{{ s.by }}" width="20" height="20" rx="5" style="fill:{{ s.busFill }};stroke:var(--surf);stroke-width:2px"></rect><text x="{{ s.x }}" y="{{ s.iy }}" style="fill:var(--surf);font-family:'Material Symbols Rounded';font-size:14px;text-anchor:middle">directions_bus</text></sc-if>
+            <sc-if value="{{ s.wet }}"><circle cx="{{ s.wx }}" cy="{{ s.wy }}" r="5" style="fill:var(--rain);stroke:var(--surf);stroke-width:1.5px"></circle></sc-if>
+            <sc-if value="{{ s.showLabel }}"><text x="{{ s.lx }}" y="{{ s.ly }}" style="fill:var(--ink);font-size:{{ s.fs }};font-weight:800;text-anchor:{{ s.anchor }};paint-order:stroke;stroke:var(--land);stroke-width:4px;stroke-linejoin:round">{{ s.name }}</text></sc-if>
+          </g>
+        </sc-for>
+        <g style="pointer-events:none">
+          <circle cx="610" cy="215" r="10" style="fill:#E85D3A;opacity:.35;transform-box:fill-box;transform-origin:center;animation:rwRing 2.2s ease-out infinite"></circle>
+          <circle cx="610" cy="215" r="8" style="fill:var(--ink);stroke:var(--surf);stroke-width:3px"></circle>
+          <text x="626" y="234" style="fill:var(--ink);font-size:13px;font-weight:800;paint-order:stroke;stroke:var(--land);stroke-width:4px">SMU</text>
+          <rect x="310" y="576" width="24" height="24" rx="6" style="fill:#E85D3A;stroke:var(--surf);stroke-width:3px"></rect>
+          <text x="322" y="593" style="fill:#111;font-size:13px;font-weight:800;text-anchor:middle">B</text>
+          <text x="342" y="614" style="fill:var(--ink);font-size:14px;font-weight:800;paint-order:stroke;stroke:var(--land);stroke-width:4px">VivoCity</text>
+        </g>
+      </g>
+    </svg>
+
+    <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
+      <div style="position:absolute;top:12px;left:12px;background:var(--surf);border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;box-shadow:0 4px 14px rgba(0,0,0,.08)">
+        <div style="display:flex;align-items:center;gap:8px"><span style="width:26px;border-top:4px dotted var(--ink)"></span>Walking</div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="width:26px;height:6px;border-radius:3px;background:#9900AA"></span>MRT</div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="width:26px;height:6px;border-radius:3px;background:var(--ink)"></span>Bus</div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="width:14px;height:14px;border-radius:50%;background:var(--rain);opacity:.6;margin:0 6px"></span>Rain zone</div>
+        <div style="display:flex;align-items:center;gap:8px"><span class="material-symbols-rounded" style="font-size:16px;color:var(--rain);margin:0 5px">rainy</span>Exposed walk</div>
+      </div>
+    </sc-if>
+    <div style="position:absolute;top:12px;right:12px;display:flex;flex-direction:column;gap:6px">
+      <button onClick="{{ zoomIn }}" aria-label="Zoom in" style="width:40px;height:40px;border-radius:9px;border:1px solid var(--line);background:var(--surf);color:var(--ink);display:grid;place-items:center;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.08)" style-active="transform:scale(.9)"><span class="material-symbols-rounded" style="font-size:22px">add</span></button>
+      <button onClick="{{ zoomOut }}" aria-label="Zoom out" style="width:40px;height:40px;border-radius:9px;border:1px solid var(--line);background:var(--surf);color:var(--ink);display:grid;place-items:center;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.08)" style-active="transform:scale(.9)"><span class="material-symbols-rounded" style="font-size:22px">remove</span></button>
+      <button onClick="{{ recenter }}" aria-label="Recenter" style="width:40px;height:40px;border-radius:9px;border:1px solid var(--line);background:var(--surf);color:var(--ink);display:grid;place-items:center;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.08)" style-active="transform:scale(.9)"><span class="material-symbols-rounded" style="font-size:21px">my_location</span></button>
+    </div>
+    <sc-if value="{{ tracing }}"><div style="position:absolute;top:12px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--surf);border-radius:8px;padding:7px 12px;font-size:13px;font-weight:800;display:flex;align-items:center;gap:6px;animation:rwUp .25s ease both;white-space:nowrap"><span class="material-symbols-rounded" style="font-size:17px">alt_route</span>{{ tracingLabel }}</div></sc-if>
+    <div style="position:absolute;left:12px;bottom:12px;right:12px;display:flex;gap:8px;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;pointer-events:none">
+      <div style="display:flex;align-items:center;gap:8px;background:{{ wxChipBg }};color:{{ wxChipFg }};border-radius:9px;padding:9px 12px;font-size:13.5px;font-weight:800;box-shadow:0 4px 14px rgba(0,0,0,.12);transition:background .6s;pointer-events:auto"><span class="material-symbols-rounded" style="font-size:19px;font-variation-settings:'FILL' 1">{{ wxIcon }}</span>{{ wxMapChip }}</div>
+      <sc-if value="{{ notMapScreen }}"><button onClick="{{ goMap }}" style="pointer-events:auto;height:40px;padding:0 14px;border-radius:9px;border:0;background:var(--ink);color:var(--surf);font-weight:800;font-size:13.5px;display:flex;align-items:center;gap:6px;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.15)" style-active="transform:scale(.95)"><span class="material-symbols-rounded" style="font-size:19px">open_in_full</span>Explore map</button></sc-if>
+    </div>
+  </div>
+</div>
+</sc-if>
+</main>
+
+<sc-if value="{{ narrow }}">
+  <nav aria-label="Main" style="position:fixed;left:0;right:0;bottom:0;z-index:55;height:68px;background:var(--surf);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);padding-bottom:env(safe-area-inset-bottom)">
+    <sc-for list="{{ tabs }}" as="t"><button onClick="{{ t.onClick }}" aria-current="{{ t.cur }}" style="border:0;background:transparent;color:{{ t.mfg }};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:11.5px;font-weight:800;cursor:pointer;position:relative" style-active="transform:scale(.9)"><span style="position:absolute;top:0;left:22%;right:22%;height:3px;border-radius:0 0 3px 3px;background:{{ t.bar }}"></span><span class="material-symbols-rounded" style="font-size:24px;font-variation-settings:'FILL' {{ t.fill }}">{{ t.icon }}</span>{{ t.label }}</button></sc-for>
+  </nav>
+</sc-if>
+
+<sc-if value="{{ tourOn }}">
+  <div role="dialog" aria-label="Guided tour" key="{{ tourKey }}" style="position:fixed;z-index:70;right:{{ tourR }};left:{{ tourL }};bottom:{{ tourB }};width:{{ tourW }};background:#111;color:#fff;border-radius:12px;padding:16px;box-shadow:0 18px 50px rgba(0,0,0,.35);border:2px solid #E85D3A;animation:rwUp .35s cubic-bezier(.2,.8,.2,1) both">
+    <div style="display:flex;align-items:center;gap:8px"><span style="font-family:'DM Mono',monospace;font-size:12px;color:#E85D3A;font-weight:500">{{ tourIdx }}</span><div style="flex:1;display:flex;gap:3px"><sc-for list="{{ tourDots }}" as="d"><span style="flex:1;height:3px;border-radius:2px;background:{{ d.c }}"></span></sc-for></div><button onClick="{{ tourExit }}" aria-label="End tour" style="border:0;background:none;color:#aaa;cursor:pointer;display:grid;place-items:center"><span class="material-symbols-rounded" style="font-size:20px">close</span></button></div>
+    <div style="font-size:19px;font-weight:800;letter-spacing:-.02em;margin-top:10px">{{ tourTitle }}</div>
+    <div style="font-size:14.5px;line-height:1.45;color:#ddd;margin-top:6px;text-wrap:pretty">{{ tourBody }}</div>
+    <div style="display:flex;gap:8px;margin-top:14px;justify-content:flex-end"><button onClick="{{ tourBack }}" style="height:40px;padding:0 14px;border-radius:9px;border:1px solid #444;background:transparent;color:#fff;font-weight:700;font-size:14px;cursor:pointer">Back</button><button onClick="{{ tourNext }}" style="height:40px;padding:0 16px;border-radius:9px;border:0;background:#E85D3A;color:#111;font-weight:800;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:6px" style-active="transform:scale(.95)">{{ tourNextLabel }}<span class="material-symbols-rounded" style="font-size:19px">arrow_forward</span></button></div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ onboard }}">
+  <div style="position:fixed;inset:0;z-index:80;background:rgba(10,12,16,.55);display:grid;place-items:center;padding:16px;animation:rwIn .3s ease both">
+    <div role="dialog" aria-label="Welcome to RouteWise" style="width:min(520px,100%);background:var(--surf);color:var(--ink);border-radius:14px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.4);animation:rwPop .5s cubic-bezier(.2,.9,.3,1.2) both">
+      <div style="background:#111;color:#fff;padding:22px 22px 18px;border-bottom:4px solid #E85D3A">
+        <div style="display:flex;gap:6px;margin-bottom:14px"><span style="height:6px;width:40px;border-radius:3px;background:#D42E12"></span><span style="height:6px;width:40px;border-radius:3px;background:#009645"></span><span style="height:6px;width:40px;border-radius:3px;background:#9900AA"></span><span style="height:6px;width:40px;border-radius:3px;background:#FA9E0D"></span><span style="height:6px;width:40px;border-radius:3px;background:#005EC4"></span></div>
+        <div style="font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#aaa">Selamat pagi!</div>
+        <div style="font-size:34px;font-weight:800;letter-spacing:-.04em;line-height:1.02;margin-top:6px">Meet RouteWise.<br>Rain-smart commuting.</div>
+      </div>
+      <div style="padding:20px 22px;display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;gap:12px;align-items:flex-start"><span class="material-symbols-rounded" style="font-size:24px;color:#E85D3A">alt_route</span><div style="font-size:15px;line-height:1.4"><b>Routes, live timings and weather</b>, all on one screen. No more app-hopping.</div></div>
+        <div style="display:flex;gap:12px;align-items:flex-start"><span class="material-symbols-rounded" style="font-size:24px;color:#E85D3A">timer</span><div style="font-size:15px;line-height:1.4"><b>Leave now or wait?</b> We'll tell you, and tell you why.</div></div>
+        <div style="display:flex;gap:12px;align-items:flex-start"><span class="material-symbols-rounded" style="font-size:24px;color:#E85D3A">forum</span><div style="font-size:15px;line-height:1.4"><b>Reports from people at the stop</b>: wet, crowded, long queue.</div></div>
+        <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap"><button onClick="{{ onboardTour }}" style="flex:1 1 200px;height:50px;border-radius:10px;border:0;background:#E85D3A;color:#111;font-weight:800;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px" style-active="transform:scale(.96)"><span class="material-symbols-rounded" style="font-size:21px">explore</span>Take the 1-min tour</button><button onClick="{{ onboardSkip }}" style="flex:1 1 140px;height:50px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--ink);font-weight:700;font-size:15px;cursor:pointer">Explore on my own</button></div>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ hasToast }}">
+  <div role="status" key="{{ toastKey }}" style="position:fixed;z-index:75;top:78px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--surf);border-radius:10px;padding:11px 16px;font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px;box-shadow:0 12px 30px rgba(0,0,0,.25);animation:rwUp .3s cubic-bezier(.2,.9,.3,1.3) both;max-width:calc(100% - 24px)"><span class="material-symbols-rounded" style="font-size:20px;color:#5BD38A;font-variation-settings:'FILL' 1">check_circle</span>{{ toast }}</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;rainOverlay&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Weather FX&quot;},&quot;rainIntensity&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:1,&quot;min&quot;:0.3,&quot;max&quot;:2,&quot;step&quot;:0.1,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Weather FX&quot;},&quot;skipOnboarding&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Demo&quot;}}">
+class Component extends DCLogic {
+  L = {NS:['#D42E12','#fff'],EW:['#009645','#fff'],NE:['#9900AA','#fff'],CC:['#FA9E0D','#111'],DT:['#005EC4','#fff'],TE:['#9D5B25','#fff'],CG:['#009645','#fff']};
+  STOPS = [
+    {id:'dhoby',name:'Dhoby Ghaut',kind:'mrt',codes:[['NS','NS24'],['NE','NE6'],['CC','CC1']],x:567,y:188,lx:-14,ly:-14,anchor:'end',sh:2,note:'Underground interchange. Exit B links to Plaza Singapura under cover — dry even in a downpour.',arr:[{s:'NE',d:'to HarbourFront',p:240,o:40,l:1},{s:'NE',d:'to Punggol Coast',p:270,o:120,l:2},{s:'NS',d:'to Marina South Pier',p:180,o:20,l:2},{s:'CC',d:'to Stadium',p:300,o:200,l:1}]},
+    {id:'brasbasah',name:'Bras Basah',kind:'mrt',codes:[['CC','CC2']],x:622,y:205,lx:16,ly:-12,anchor:'start',sh:1,note:'Exit A to SMU has ~40 m of open plaza. Covered walkway along Bras Basah Rd from Exit B.',arr:[{s:'CC',d:'to Stadium',p:300,o:90,l:1},{s:'CC',d:'to Dhoby Ghaut',p:300,o:240,l:0}]},
+    {id:'cityhall',name:'City Hall',kind:'mrt',codes:[['NS','NS25'],['EW','EW13']],x:633,y:254,lx:16,ly:20,anchor:'start',sh:2,note:'Underground links to Raffles City and Esplanade — sheltered all the way.',arr:[{s:'EW',d:'to Tuas Link',p:200,o:60,l:2},{s:'EW',d:'to Pasir Ris',p:210,o:150,l:1},{s:'NS',d:'to Jurong East',p:180,o:100,l:3}]},
+    {id:'bugis',name:'Bugis',kind:'mrt',codes:[['EW','EW12'],['DT','DT14']],x:678,y:177,lx:16,ly:-10,anchor:'start',sh:1,note:'Exit C into Bugis Junction is covered; Exit B onto Victoria St is not.',arr:[{s:'EW',d:'to Pasir Ris',p:200,o:30,l:2},{s:'DT',d:'to Expo',p:240,o:180,l:1},{s:'EW',d:'to Tuas Link',p:210,o:100,l:2}]},
+    {id:'orchard',name:'Orchard',kind:'mrt',codes:[['NS','NS22'],['TE','TE14']],x:411,y:132,lx:0,ly:-18,anchor:'middle',sh:2,note:'Underpass to ION, Wisma and Ngee Ann City is fully sheltered.',arr:[{s:'NS',d:'to Marina South Pier',p:180,o:50,l:3},{s:'TE',d:'to Bayshore',p:300,o:200,l:1},{s:'NS',d:'to Jurong East',p:190,o:110,l:2}]},
+    {id:'outram',name:'Outram Park',kind:'mrt',codes:[['EW','EW16'],['NE','NE3'],['TE','TE17']],x:489,y:397,lx:-16,ly:22,anchor:'end',sh:2,note:'Long underground transfer between EW and NE — budget 4 min.',arr:[{s:'NE',d:'to HarbourFront',p:240,o:150,l:1},{s:'EW',d:'to Pasir Ris',p:200,o:20,l:2}]},
+    {id:'harbourfront',name:'HarbourFront',kind:'mrt',codes:[['NE','NE1'],['CC','CC29']],x:300,y:563,lx:-16,ly:-6,anchor:'end',sh:2,note:'Covered link straight into VivoCity basement. No umbrella needed.',arr:[{s:'NE',d:'to Punggol Coast',p:240,o:10,l:0},{s:'CC',d:'to Dhoby Ghaut',p:300,o:140,l:0}]},
+    {id:'b-smu',name:'Opp SMU',kind:'bus',code:'04121',x:596,y:234,lx:-14,ly:18,anchor:'end',sh:2,note:'Shelter fits about 20. When it pours, the queue spills onto the open walkway.',arr:[{s:'7',d:'to Clementi Int',p:420,o:160,l:2},{s:'171',d:'to Yishun Int',p:540,o:525,l:1},{s:'80',d:'to HarbourFront Int',p:600,o:330,l:0},{s:'57',d:'to HarbourFront Int',p:480,o:60,l:1}]},
+    {id:'b-bugis',name:'Bugis Junction',kind:'bus',code:'01119',x:704,y:158,lx:16,ly:-8,anchor:'start',sh:0,note:'Shelter only covers half the usual queue. Stand near the pillar to keep dry.',arr:[{s:'7',d:'to Clementi Int',p:420,o:100,l:3},{s:'175',d:'to Clementi Int',p:600,o:300,l:1},{s:'960',d:'to Woodlands Int',p:480,o:440,l:2}]},
+    {id:'b-orchard',name:'Lucky Plaza',kind:'bus',code:'09048',x:440,y:154,lx:16,ly:16,anchor:'start',sh:1,note:'Covered, but the kerb floods quickly in heavy rain.',arr:[{s:'7',d:'to Clementi Int',p:420,o:300,l:2},{s:'171',d:'to Yishun Int',p:540,o:200,l:1},{s:'190',d:'to Choa Chu Kang',p:480,o:90,l:3}]},
+    {id:'b-clarke',name:'Clarke Quay Stn',kind:'bus',code:'04222',x:604,y:326,lx:16,ly:6,anchor:'start',sh:1,note:'Partial cover; the riverside approach is exposed.',arr:[{s:'51',d:'to Jurong East',p:540,o:50,l:1},{s:'124',d:'to St Michael\'s',p:600,o:320,l:0},{s:'174',d:'to Boon Lay',p:480,o:120,l:2}]},
+    {id:'b-vivo',name:'VivoCity',kind:'bus',code:'14141',x:352,y:568,lx:16,ly:-6,anchor:'start',sh:2,note:'Fully covered drop-off right at the mall entrance.',arr:[{s:'80',d:'to Sims Pl',p:600,o:250,l:0},{s:'57',d:'to Bishan Int',p:480,o:160,l:1},{s:'10',d:'to Tampines Int',p:540,o:400,l:1}]},
+    {id:'b-telok',name:'Opp Seah Im Food Ctr',kind:'bus',code:'14271',x:262,y:540,lx:-14,ly:-8,anchor:'end',sh:0,note:'Unsheltered pole stop. Nearest cover is the food centre, 60 m away.',arr:[{s:'57',d:'to HarbourFront Int',p:480,o:200,l:1},{s:'65',d:'to Tampines Int',p:600,o:100,l:2},{s:'143',d:'to Toa Payoh Int',p:540,o:380,l:0}]}
+  ];
+  EXTRA = [
+    {id:'bishan',name:'Bishan',codes:[['NS','NS17'],['CC','CC15']]},
+    {id:'payalebar',name:'Paya Lebar',codes:[['EW','EW8'],['CC','CC9']]},
+    {id:'changi',name:'Changi Airport',codes:[['CG','CG2']]},
+    {id:'tampines',name:'Tampines Hub',code:'75009'},
+    {id:'jurong',name:'Jurong East',codes:[['NS','NS1'],['EW','EW24']]}
+  ];
+  ROUTES = [
+    {id:'ne',name:'NE Line direct',via:'Walk → Dhoby Ghaut → HarbourFront',dur:22,tr:0,walk:520,exp:4,fare:'$1.39',legs:[{k:'walk',m:5,wet:1},{k:'NE',m:13},{k:'walk',m:4}],next:{label:'NE train · Dhoby Ghaut',p:240,o:40},segs:[{k:'walk',pts:'610,215 590,204 567,188'},{k:'rail',l:'NE',pts:'567,188 578,309 544,353 489,397 300,563'},{k:'walk',pts:'300,563 312,577 322,588'}],wet:[{x:589,y:203}]},
+    {id:'bus80',name:'Bus 80 direct',via:'Opp SMU → VivoCity, one seat',dur:36,tr:0,walk:150,exp:1,fare:'$1.29',legs:[{k:'walk',m:2},{k:'bus',n:'80',m:32},{k:'walk',m:2}],next:{label:'Bus 80 · Opp SMU',p:600,o:330},segs:[{k:'walk',pts:'610,215 596,234'},{k:'bus',pts:'596,234 660,262 604,326 544,360 489,397 420,455 352,568'},{k:'walk',pts:'352,568 322,588'}],wet:[]},
+    {id:'ewne',name:'EW + NE via Outram',via:'City Hall → Outram Park → HarbourFront',dur:26,tr:1,walk:640,exp:6,fare:'$1.39',legs:[{k:'walk',m:6,wet:1},{k:'EW',m:8},{k:'NE',m:8},{k:'walk',m:4}],next:{label:'EW train · City Hall',p:200,o:60},segs:[{k:'walk',pts:'610,215 624,236 633,254'},{k:'rail',l:'EW',pts:'633,254 622,353 567,441 489,397'},{k:'rail',l:'NE',pts:'489,397 300,563'},{k:'walk',pts:'300,563 312,577 322,588'}],wet:[{x:622,y:236}]},
+    {id:'b57',name:'Bus 57 + walk',via:'Opp SMU → Telok Blangah Rd → walk',dur:29,tr:0,walk:820,exp:9,fare:'$1.19',legs:[{k:'walk',m:2},{k:'bus',n:'57',m:19},{k:'walk',m:8,wet:1}],next:{label:'Bus 57 · Opp SMU',p:480,o:60},segs:[{k:'walk',pts:'610,215 596,234'},{k:'bus',pts:'596,234 604,326 489,397 400,468 300,520 262,540'},{k:'walk',pts:'262,540 290,566 322,588'}],wet:[{x:284,y:560}]}
+  ];
+  TYPES = [
+    {id:'crowded',label:'Crowded',icon:'groups',c:'#E85D3A'},
+    {id:'wet',label:'Wet',icon:'water_drop',c:'#2E6BD8'},
+    {id:'sheltered',label:'Sheltered',icon:'roofing',c:'#00804A'},
+    {id:'unsheltered',label:'Unsheltered',icon:'umbrella',c:'#A86A00'},
+    {id:'slippery',label:'Slippery',icon:'warning',c:'#C0280F'},
+    {id:'queue',label:'Long queue',icon:'hourglass_top',c:'#7A4BC2'}
+  ];
+  SAVED = [
+    {id:'s1',name:'Morning commute',from:'Tampines Hub',to:'SMU / Bras Basah',when:'Weekdays · 8:15 AM',dur:'41 min',legs:['walk','EW','walk'],fc:{heavy:['Showers 8–8:40 AM near Tampines','rainy',1],light:['Light showers possible','rainy',1],clear:['Dry · 31°C','sunny',0]}},
+    {id:'s2',name:'Friday makan',from:'SMU / Bras Basah',to:'VivoCity',when:'Fridays · 6:30 PM',dur:'22 min',legs:['walk','NE','walk'],fc:{heavy:['Clearing by evening','partly_cloudy_day',0],light:['Clearing by evening','partly_cloudy_day',0],clear:['Dry all evening','sunny',0]}},
+    {id:'s3',name:'Weekend gym',from:'Bishan',to:'Orchard',when:'Saturdays · 11:00 AM',dur:'18 min',legs:['NS'],fc:{heavy:['Hazy sunshine','sunny',0],light:['Hazy sunshine','sunny',0],clear:['Hazy sunshine','sunny',0]}},
+    {id:'s4',name:'Fetch Mum',from:'Dhoby Ghaut',to:'Changi Airport',when:'Occasional',dur:'52 min',legs:['NS','EW','CG'],fc:{heavy:['Thundery showers in the east','thunderstorm',1],light:['Cloudy','cloud',0],clear:['Dry','sunny',0]}}
+  ];
+  ALERTS = [
+    {id:'a1',tone:'rain',icon:'rainy',when:'Tomorrow · Morning commute',title:'Rain expected near your usual 8:15 AM commute',body:'Showers over Tampines from 8:00–8:40 AM. Your 6-min walk to Tampines MRT is unsheltered, so bring umbrella hor.',act:'Leave 10 min later',toast:'Done! Reminder moved to 8:25 AM.',route:'s1'},
+    {id:'a2',tone:'time',icon:'schedule',when:'Today · Friday makan',title:'Consider leaving 10 minutes later',body:'Bus 7 is bunching at Opp SMU. The one 10 min behind is emptier, and the rain at Bras Basah should ease by then.',act:'Remind me in 10',toast:'Okay, we\'ll buzz you in 10 min.',route:'s2'},
+    {id:'a3',tone:'ok',icon:'sunny',when:'Saturday · Weekend gym',title:'Saturday gym run looks dry',body:'No rain forecast near Bishan or Orchard before noon. Steady lah.',act:'Nice',toast:'Got it. Enjoy the workout!',route:'s3'}
+  ];
+  ZONES = {
+    heavy:[{x:665,y:195,r:165,lvl:'heavy',label:'Heavy rain · Bugis'},{x:405,y:135,r:115,lvl:'light',label:'Light rain · Orchard'}],
+    light:[{x:640,y:205,r:130,lvl:'light',label:'Light rain · Bras Basah'},{x:405,y:135,r:105,lvl:'light',label:'Light rain · Orchard'}],
+    clear:[]
+  };
+  TOUR = [
+    {screen:'home',title:'Your commute, at a glance',body:'Weather, a planner, live timings and a smart recommendation on one screen. Try the weather switch up top: the whole dashboard reacts.'},
+    {screen:'home',title:'1 · Plan SMU → VivoCity',body:'We\'ve filled it in and hit Plan route for you. RouteWise checks every option against live timings and rain cells.'},
+    {screen:'home',title:'2 · Leave now, or wait?',body:'RouteWise says wait 8 min. Rain over your walk is easing, and the next option has fewer transfers. The ring counts down live.'},
+    {screen:'routes',title:'3 · Compare routes',body:'Every option side by side: time, transfers, walking, live departures, rain exposure and comfort.'},
+    {screen:'routes',title:'4 · Make it yours',body:'Drag cards to reorder by what matters to you, or pin a favourite. Hover a card to trace it on the map.'},
+    {screen:'map',title:'5 · See it on the map',body:'Dotted lines are walking legs, solid lines are trains and buses. Blue zones are rain cells; drop markers flag exposed walks.'},
+    {screen:'map',title:'6 · Inspect a stop',body:'We opened Dhoby Ghaut: live arrivals, shelter, weather right there, and what other commuters are reporting.'},
+    {screen:'saved',title:'7 · Saved routes & alerts',body:'Habitual trips get forecast alerts, like a heads-up before your 8:15 AM commute. Pin favourites to keep them on top.'},
+    {screen:'reports',title:'8 · Community reports',body:'Quick, timestamped updates from people at the stop. Pick a place, tap a type, and you\'re done.'}
+  ];
+
+  state = {
+    screen:'home', wx:'heavy', wxAt:0, auto:false, autoIdx:2, autoAt:0, dark:false, a11y:false,
+    tour:-1, onboard:false, tick:0, narrow:false,
+    origin:'SMU / Bras Basah', dest:'VivoCity', when:'now', analysing:false, remind:false,
+    order:['ne','bus80','ewne','b57'], sort:'best', pinned:[], hover:null, sel:'ne', drag:null,
+    stop:null, layers:{rain:true,mrt:true,bus:true,route:true}, zoom:1, stopQ:'',
+    savedPinned:['s1','s2'], alertsOn:{s1:true,s2:true,s3:false,s4:false}, dismissed:[],
+    reports:this.seed(), rFilter:'all', rQ:'', rSort:'newest', newStop:'brasbasah', confirmed:[], flash:null,
+    toast:null, toastN:0
+  };
+
+  seed(){
+    const d=[['wet','brasbasah','Puddle at the Exit A stairs, walk slowly',120,8],['queue','b-smu','Queue for bus 7 spilling onto the walkway',190,4],['crowded','bishan','Platform packed. Waited 2 trains before boarding',240,12],['unsheltered','b-bugis','Shelter only covers half the queue',360,5],['slippery','dhoby','Floor wet near the Exit B escalator',540,7],['sheltered','cityhall','Link to Raffles City dry all the way',720,15],['crowded','orchard','ION side very busy, use Exit C',1080,3],['wet','payalebar','',1500,2],['queue','changi','Taxi queue at T3 long, MRT moving fine',1860,6],['sheltered','tampines','Covered walkway from interchange to Hub works',2400,9],['crowded','jurong','',3100,4]];
+    return d.map((r,i)=>({id:i+1,type:r[0],stop:r[1],note:r[2],at:-r[3],c:r[4]}));
+  }
+
+  componentDidMount(){
+    this._t=setInterval(()=>this.setState(s=>{
+      const n={tick:s.tick+1};
+      if(s.auto && (n.tick-s.autoAt)%7===0){const seq=['clear','light','heavy','light'];const i=(s.autoIdx+1)%4;n.autoIdx=i;n.wx=seq[i];n.wxAt=n.tick;}
+      return n;
+    }),1000);
+    this._rs=()=>this.setState({narrow:window.innerWidth<880,compact:window.innerWidth<1360});
+    this._rs(); window.addEventListener('resize',this._rs);
+    let ob=null; try{ob=localStorage.getItem('rw_onboarded')}catch(e){}
+    if(!ob && !this.props.skipOnboarding) this.setState({onboard:true});
+    this.startRain();
+  }
+  componentWillUnmount(){clearInterval(this._t);window.removeEventListener('resize',this._rs);cancelAnimationFrame(this._raf);if(this._fit)window.removeEventListener('resize',this._fit);}
+  componentDidUpdate(){
+    if(!this._flip) return; const m=this._flip; this._flip=null;
+    document.querySelectorAll('[data-rcard]').forEach(el=>{
+      const o=m[el.getAttribute('data-rcard')]; if(!o) return;
+      const n=el.getBoundingClientRect(); const dx=o.left-n.left, dy=o.top-n.top; if(!dx&&!dy) return;
+      el.style.transition='none'; el.style.transform=`translate(${dx}px,${dy}px)`; el.getBoundingClientRect();
+      requestAnimationFrame(()=>{el.style.transition='transform .45s cubic-bezier(.2,.8,.2,1), box-shadow .2s, border-color .2s, opacity .2s'; el.style.transform='';});
+    });
+  }
+  captureFlip(){const m={};document.querySelectorAll('[data-rcard]').forEach(el=>{m[el.getAttribute('data-rcard')]=el.getBoundingClientRect()});this._flip=m;}
+
+  startRain(){
+    const c=this.rainEl; if(!c) return; const ctx=c.getContext('2d');
+    const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const fit=()=>{const d=window.devicePixelRatio||1;c.width=innerWidth*d;c.height=innerHeight*d;ctx.setTransform(d,0,0,d,0,0)}; fit(); this._fit=fit; window.addEventListener('resize',fit);
+    let drops=[], flash=0;
+    const mk=(init)=>({x:Math.random()*(innerWidth+200)-100,y:init?Math.random()*innerHeight:-30-Math.random()*120,v:9+Math.random()*9,l:10+Math.random()*16,w:.7+Math.random()*.9,a:.08+Math.random()*.2});
+    const loop=()=>{
+      const s=this.state; const on=this.props.rainOverlay!==false; const k=this.props.rainIntensity??1;
+      let target=on?(s.wx==='heavy'?220:s.wx==='light'?70:0):0; target=Math.round(target*k*(reduce?.2:1));
+      while(drops.length<target) drops.push(mk(drops.length<target*.5));
+      if(drops.length>target) drops.splice(0,Math.min(6,drops.length-target));
+      ctx.clearRect(0,0,innerWidth,innerHeight);
+      const col=s.dark?'190,210,255':'35,75,150', sp=s.wx==='heavy'?1.25:.9;
+      ctx.lineCap='round';
+      for(const d of drops){
+        d.y+=d.v*sp*(reduce?.15:1); d.x+=d.v*.16*sp;
+        if(d.y>innerHeight+20) Object.assign(d,mk(false));
+        ctx.strokeStyle=`rgba(${col},${d.a})`; ctx.lineWidth=d.w;
+        ctx.beginPath(); ctx.moveTo(d.x,d.y); ctx.lineTo(d.x-d.l*.16,d.y-d.l); ctx.stroke();
+      }
+      if(on&&s.wx==='heavy'&&!reduce&&Math.random()<.0012) flash=1;
+      if(flash>0){ctx.fillStyle=`rgba(255,255,255,${flash*.28})`;ctx.fillRect(0,0,innerWidth,innerHeight);flash-=.06;}
+      this._raf=requestAnimationFrame(loop);
+    };
+    loop();
+  }
+  rainRef=el=>{this.rainEl=el};
+
+  buzz(){try{navigator.vibrate&&navigator.vibrate(12)}catch(e){}}
+  showToast(msg){this.buzz();const n=this.state.toastN+1;this.setState({toast:msg,toastN:n});clearTimeout(this._tt);this._tt=setTimeout(()=>this.setState({toast:null}),2600);}
+  go(screen,extra){this.buzz();this.setState(Object.assign({screen,hover:null},extra||{}));try{window.scrollTo({top:0,behavior:'smooth'})}catch(e){}}
+  plan(){this.buzz();this.setState({analysing:true});clearTimeout(this._pt);this._pt=setTimeout(()=>this.setState(s=>({analysing:false,wxAt:s.tick})),1200);}
+  place(id){return this.STOPS.find(s=>s.id===id)||this.EXTRA.find(s=>s.id===id);}
+  chips(p){const L=this.L;if(p.codes&&p.codes.length)return p.codes.map(([l,t])=>({t,bg:L[l][0],fg:L[l][1]}));return [{t:p.code,bg:'var(--chip)',fg:'var(--ink)'}];}
+  svc(s){const L=this.L;return L[s]?{bg:L[s][0],fg:L[s][1]}:{bg:'var(--ink)',fg:'var(--surf)'};}
+  wxAt(x,y){const z=this.ZONES[this.state.wx];let best=null;for(const q of z){if(Math.hypot(q.x-x,q.y-y)<q.r){if(q.lvl==='heavy')return 'heavy';best='light';}}return best;}
+  wxInfo(lvl){const rain=this.state.wx!=='clear';if(lvl==='heavy')return{label:'Heavy rain',icon:'thunderstorm',c:'var(--rain)',bg:'#2E6BD8',fg:'#fff'};if(lvl==='light')return{label:'Light rain',icon:'rainy',c:'var(--rain)',bg:'var(--rainbg)',fg:'var(--ink)'};return rain?{label:'Cloudy',icon:'cloud',c:'var(--ink2)',bg:'var(--chip)',fg:'var(--ink)'}:{label:'Fair',icon:'sunny',c:'#B37400',bg:'#FDEBC8',fg:'#3D2A00'};}
+  score(r){const w=this.state.wx==='heavy'?3:this.state.wx==='light'?1.5:0;return r.dur+r.exp*w+r.tr*5;}
+  displayIds(){
+    const s=this.state;let ids;
+    if(s.sort==='custom')ids=[...s.order];
+    else{const k={best:r=>this.score(r),fastest:r=>r.dur,walk:r=>r.walk,rain:r=>r.exp*100+r.dur,transfers:r=>r.tr*100+r.dur}[s.sort];ids=[...this.ROUTES].sort((a,b)=>k(a)-k(b)).map(r=>r.id);}
+    return [...ids.filter(i=>s.pinned.includes(i)),...ids.filter(i=>!s.pinned.includes(i))];
+  }
+  moveTo(id,targetId){const ids=this.displayIds();const from=ids.indexOf(id),to=ids.indexOf(targetId);if(from<0||to<0||from===to)return;ids.splice(from,1);ids.splice(to,0,id);this.captureFlip();this.setState({order:ids,sort:'custom'});}
+  moveBy(id,d){const ids=this.displayIds();const i=ids.indexOf(id),j=i+d;if(j<0||j>=ids.length)return;[ids[i],ids[j]]=[ids[j],ids[i]];this.captureFlip();this.buzz();this.setState({order:ids,sort:'custom'});}
+  openStop(id){this.buzz();this.setState({stop:id,screen:'map',zoom:1.6,hover:null});}
+  post(type,stop){
+    const s=this.state;const id=Date.now();const t=this.TYPES.find(x=>x.id===type);const p=this.place(stop);
+    this.setState({reports:[{id,type,stop,note:'',at:s.tick,c:1,mine:true},...s.reports],flash:id,rFilter:'all',rQ:''});
+    this.showToast(`Thanks! "${t.label}" at ${p.name} is live.`);
+    setTimeout(()=>this.setState(st=>st.flash===id?{flash:null}:null),1500);
+  }
+  tourGo(i){
+    if(i<0)return; if(i>=this.TOUR.length){this.setState({tour:-1});this.showToast('Tour done. Shiok! Explore freely.');return;}
+    const st=this.TOUR[i];const p={tour:i,screen:st.screen,hover:null};
+    if(i===0)Object.assign(p,{wx:'heavy',wxAt:this.state.tick,auto:false,stop:null,zoom:1});
+    if(i===1)Object.assign(p,{origin:'SMU / Bras Basah',dest:'VivoCity'});
+    if(i===5)Object.assign(p,{stop:null,zoom:1,sel:'ne'});
+    if(i===6)Object.assign(p,{stop:'dhoby',zoom:1.6});
+    this.setState(p,()=>{if(i===1)this.plan();});
+    try{window.scrollTo({top:0,behavior:'smooth'})}catch(e){}
+  }
+  closeOnboard(tour){try{localStorage.setItem('rw_onboarded','1')}catch(e){}this.setState({onboard:false});if(tour)this.tourGo(0);}
+
+  renderVals(){
+    const s=this.state, wx=s.wx, rain=wx!=='clear', T=s.tick, L=this.L, narrow=s.narrow, wide=!narrow;
+    const base=8*3600+42*60+T;
+    const fmt=sec=>{let h=Math.floor(sec/3600)%24,m=Math.floor(sec%3600/60);const ap=h>=12?'PM':'AM';h=h%12||12;return `${h}:${String(m).padStart(2,'0')} ${ap}`;};
+    const pad=n=>String(n).padStart(2,'0');
+    const nextS=(p,o)=>p-((T+o)%p);
+    const arrT=(sec)=>sec<45?'Arr':`${Math.ceil(sec/60)} min`;
+    const screen=s.screen, isMap=screen==='map', showMap=['home','routes','map'].includes(screen);
+    const R=this.ROUTES, byId=Object.fromEntries(R.map(r=>[r.id,r]));
+    const TY=Object.fromEntries(this.TYPES.map(t=>[t.id,t]));
+    const ago=sec=>sec<45?'Just now':sec<3600?`${Math.max(1,Math.round(sec/60))} min ago`:`${Math.floor(sec/3600)} h ago`;
+
+    // weather
+    const W={heavy:{title:'Heavy rain around Bugis',meta:'26°C · 94% hum.',sub:'Light rain near Orchard. Easing over Bras Basah by about 8:52 AM.',icon:'thunderstorm',tile:'#2E6BD8',tfg:'#fff',chip:'Heavy rain around Bugis · easing ~8:52',bars:[96,94,90,82,70,52,38,28,20,14,10,8]},
+      light:{title:'Light rain near Bras Basah',meta:'27°C · 88% hum.',sub:'Drizzle should clear in about 4 min. Orchard is also a bit wet.',icon:'rainy',tile:'#2E6BD8',tfg:'#fff',chip:'Light rain near Bras Basah & Orchard',bars:[48,44,38,30,22,16,12,9,7,6,6,5]},
+      clear:{title:'Fair and sunny',meta:'31°C · UV high',sub:'No rain on your routes for the next hour. Steady!',icon:'sunny',tile:'#FA9E0D',tfg:'#111',chip:'No rain nearby · 31°C',bars:[4,4,3,3,3,4,5,6,8,10,12,14]}}[wx];
+    const rainBars=W.bars.map(v=>({h:`${Math.max(3,v*.3)}px`,c:v>=60?'var(--rain)':v>=25?'#8AAAE6':'var(--line)'}));
+
+    // recommendation
+    const totalW=wx==='heavy'?480:wx==='light'?240:0;
+    const remain=Math.max(0,totalW-(T-s.wxAt)); const waiting=remain>0;
+    const neNext=nextS(240,40);
+    const recReason=waiting?(wx==='heavy'?'Rain near your walking segment is expected to ease, and the next route has fewer transfers.':'Drizzle over Bras Basah clears in a few minutes, and you\'ll still catch an NE train with zero transfers.'):(rain?`Rain over Bras Basah has eased. Go now: the NE train from Dhoby Ghaut is ${arrT(neNext)==='Arr'?'arriving':'in '+arrT(neNext)}.`:`Shorter wait: the next NE train from Dhoby Ghaut is ${arrT(neNext)==='Arr'?'arriving':'in '+arrT(neNext)}, and your walk is dry all the way.`);
+    const recChips=waiting?(wx==='heavy'?[{icon:'umbrella',label:'Less rain exposure',c:'#8DB6FF'},{icon:'sync_alt',label:'Fewer transfers',c:'#FA9E0D'}]:[{icon:'umbrella',label:'Less rain exposure',c:'#8DB6FF'},{icon:'event_available',label:'Better arrival timing',c:'#6EE7A0'}]):[{icon:'timer',label:'Shorter wait',c:'#6EE7A0'},{icon:'sync_alt',label:'Fewer transfers',c:'#FA9E0D'}];
+    const recColor=waiting?'#8DB6FF':'#6EE7A0';
+    const recCompare=waiting?[
+      {title:'Leave now',route:'EW + NE · 1 transfer',exp:wx==='heavy'?'~6 min in heavy rain':'~5 min in drizzle',expIcon:'rainy',expC:'#9DBBFF',arrive:fmt(base+26*60),pick:false,bg:'#1b1b1b',bd:'#2c2c2c'},
+      {title:`Leave ${fmt(base+remain)}`,route:'NE direct · 0 transfers',exp:wx==='heavy'?'~1 min, light drizzle':'Dry by then',expIcon:'umbrella',expC:'#6EE7A0',arrive:fmt(base+remain+22*60),pick:true,tagBg:'#8DB6FF',bg:'#1f2633',bd:'#8DB6FF'}
+    ]:[{title:'Go now · NE direct',route:'Walk 5 min → Dhoby Ghaut NE6 · 0 transfers',exp:rain?'Rain has eased':'Dry walk',expIcon:'check_circle',expC:'#6EE7A0',arrive:fmt(base+22*60),pick:true,tagBg:'#6EE7A0',bg:'#18261e',bd:'#6EE7A0'}];
+
+    // nearby
+    const nearbyDef=[['b-smu','60 m'],['brasbasah','180 m'],['dhoby','450 m'],['cityhall','400 m']];
+    const shL=['Unsheltered','Partly sheltered','Sheltered'], shI=['umbrella','roofing','roofing'];
+    const nearby=nearbyDef.map(([id,dist])=>{const p=this.place(id);const w=this.wxInfo(this.wxAt(p.x,p.y));return{name:p.name,chips:this.chips(p),dist,shIcon:shI[p.sh],shLabel:shL[p.sh],wxIcon:w.icon,wxLabel:w.label,wxC:w.c,onClick:()=>this.openStop(id),arr:p.arr.slice(0,3).map(a=>{const sec=nextS(a.p,a.o);const c=this.svc(a.s);const t=arrT(sec);return{svc:a.s,bg:c.bg,fg:c.fg,t,tc:t==='Arr'?'#E85D3A':'var(--ink)',anim:t==='Arr'?'rwBlink 1s infinite':'none'}})}});
+
+    // routes cards
+    const ids=this.displayIds(); const best=[...R].sort((a,b)=>this.score(a)-this.score(b))[0].id;
+    const minDur=Math.min(...R.map(r=>r.dur)), minExp=Math.min(...R.map(r=>r.exp)), minWalk=Math.min(...R.map(r=>r.walk));
+    const lvl=r=>!rain?0:r.exp<=1?1:r.exp<=5?2:3;
+    const expNames=['Dry','Low','Medium','High'];
+    const comf=[['Comfy','#DDF3E5','#0B4D2A'],['Stay dry','#DDF3E5','#0B4D2A'],['Bring umbrella','#FDEBC8','#4A3200'],['Confirm wet one','#FBD9D0','#5C1606']];
+    const legView=(l,r)=>{const wet=l.wet&&rain;if(l.k==='walk')return{grow:l.m,bg:wet?'var(--rainbg)':'var(--chip)',fg:wet?'var(--rain)':'var(--ink2)',icon:wet?'rainy':'directions_walk',text:l.m,bs:wet?'dashed':'solid',bd:wet?'var(--rain)':'transparent'};if(l.k==='bus')return{grow:l.m,bg:'var(--ink)',fg:'var(--surf)',icon:'directions_bus',text:l.n,bs:'solid',bd:'transparent'};return{grow:l.m,bg:L[l.k][0],fg:L[l.k][1],icon:'train',text:l.k,bs:'solid',bd:'transparent'};};
+    const cards=ids.map((id,i)=>{const r=byId[id];const lv=lvl(r);const pinned=s.pinned.includes(id);const nx=nextS(r.next.p,r.next.o);const isBest=id===best;const dragging=s.drag===id;
+      const badges=[];if(isBest)badges.push({label:'RouteWise pick',bg:'#E85D3A',fg:'#111'});if(r.dur===minDur)badges.push({label:'Fastest',bg:'var(--ink)',fg:'var(--surf)'});if(rain&&r.exp===minExp)badges.push({label:'Driest',bg:'#2E6BD8',fg:'#fff'});if(r.walk===minWalk&&!(rain&&r.exp===minExp))badges.push({label:'Least walking',bg:'var(--chip)',fg:'var(--ink)'});
+      const hl=s.hover===id;
+      return{id,rank:pad(i+1),name:r.name,via:r.via,dur:r.dur,arrive:fmt(base+r.dur*60),tr:r.tr===0?'None':r.tr,walk:`${r.walk} m`,fare:r.fare,badges,pinned,pinBg:pinned?'#E85D3A':'var(--surf)',pinFg:pinned?'#111':'var(--ink2)',pinFill:pinned?1:0,
+        legs:r.legs.map(l=>legView(l,r)),nextLabel:r.next.label,nextT:nx<45?'Arriving':`${Math.floor(nx/60)}:${pad(nx%60)}`,
+        drops:[1,2,3].map(n=>({c:n<=lv?'var(--rain)':'var(--line)'})),expLabel:rain?`${expNames[lv]} · ${r.exp} min exposed`:'Dry · no rain on route',comfort:comf[lv][0],comfBg:comf[lv][1],comfFg:comf[lv][2],
+        bd:dragging?'#E85D3A':isBest?'#E85D3A':hl?'var(--ink)':'var(--line)',op:dragging?.55:1,sh:hl||dragging?'0 12px 30px rgba(0,0,0,.14)':'0 1px 0 rgba(0,0,0,.03)',
+        aria:`Option ${i+1}: ${r.name}, ${r.dur} minutes, ${r.tr} transfers, rain exposure ${expNames[lv]}`,
+        onDragStart:e=>{try{e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',id)}catch(x){}this.buzz();this.setState({drag:id,hover:id})},
+        onDragOver:e=>{e.preventDefault();if(this.state.drag&&this.state.drag!==id&&this._lastOver!==id){this._lastOver=id;this.moveTo(this.state.drag,id);setTimeout(()=>{this._lastOver=null},250);}},
+        onDrop:e=>{e.preventDefault();},
+        onDragEnd:()=>{this.setState({drag:null});this.buzz();},
+        onEnter:()=>{if(!this.state.drag)this.setState({hover:id})},onLeave:()=>{if(!this.state.drag)this.setState({hover:null})},
+        onPin:()=>{this.captureFlip();this.buzz();this.setState(st=>({pinned:st.pinned.includes(id)?st.pinned.filter(x=>x!==id):[...st.pinned,id]}))},
+        onUp:()=>this.moveBy(id,-1),onDown:()=>this.moveBy(id,1),
+        onMap:()=>this.go('map',{sel:id,stop:null,zoom:1})};
+    });
+    const sortOpts=[['best','RouteWise pick','auto_awesome'],['fastest','Fastest','bolt'],['walk','Least walking','directions_walk'],['rain','Least rain','umbrella'],['transfers','Fewest transfers','sync_alt']].concat(s.sort==='custom'?[['custom','Custom','drag_indicator']]:[]).map(([id,label,icon])=>{const on=s.sort===id;return{label,icon,on,bg:on?'var(--ink)':'var(--surf)',fg:on?'var(--surf)':'var(--ink)',bd:on?'var(--ink)':'var(--line)',onClick:()=>{this.captureFlip();this.buzz();this.setState({sort:id})}}});
+    const conditions=[
+      rain?{icon:wx==='heavy'?'thunderstorm':'rainy',text:wx==='heavy'?'Heavy rain over Bras Basah':'Light rain near Bras Basah',bg:'#2E6BD8',fg:'#fff'}:{icon:'sunny',text:'Dry along all routes',bg:'#FDEBC8',fg:'#3D2A00'},
+      {icon:'check_circle',text:'NE line · normal service',bg:'#DDF3E5',fg:'#0B4D2A'},
+      {icon:'schedule',text:'Bus 80 · +3 min delay',bg:'#FDEBC8',fg:'#4A3200'}
+    ];
+
+    // map
+    const active=showMap&&s.layers.route?(s.hover||s.sel):null;
+    const segV=g=>g.k==='walk'?{pts:g.pts,stroke:'var(--ink)',w:'4.5px',dash:'0.1 9',casing:'var(--land)',cw:'10px'}:g.k==='bus'?{pts:g.pts,stroke:'var(--ink)',w:'7px',dash:'none',casing:'var(--surf)',cw:'13px'}:{pts:g.pts,stroke:L[g.l][0],w:'8px',dash:'none',casing:'var(--surf)',cw:'14px'};
+    const ar=active?byId[active]:null;
+    const routeSegs=ar?ar.segs.map(segV):[];
+    const flowSegs=ar?ar.segs.filter(g=>g.k!=='walk').map(g=>({pts:g.pts})):[];
+    const faintSegs=(screen==='routes'&&s.layers.route)?R.filter(r=>r.id!==active).flatMap(r=>r.segs.map(g=>({pts:g.pts,dash:g.k==='walk'?'0.1 8':'none'}))):[];
+    const wetMarks=ar&&rain?ar.wet.map(m=>({x:m.x,y:m.y,ty:m.y+6})):[];
+    const zones=this.ZONES[wx].map(z=>{const lw=z.label.length*7.4+24;const ly=z.y-z.r*.62;return{x:z.x,y:z.y,r:z.r,r2:Math.round(z.r*.6),o1:z.lvl==='heavy'?.2:.12,o2:z.lvl==='heavy'?.24:.12,label:z.label,lw,lx:z.x-lw/2,ly:ly-13,tx:z.x-lw/2+12,ty:ly+5}});
+    const mapStops=this.STOPS.filter(p=>p.kind==='bus'?s.layers.bus:s.layers.mrt).map(p=>{const sel=s.stop===p.id;const wl=this.wxAt(p.x,p.y);const isBus=p.kind==='bus';return{x:p.x,y:p.y,isBus,isMrt:!isBus,r:p.codes&&p.codes.length>1?10:8,stroke:sel?'#E85D3A':'var(--ink)',busFill:sel?'#E85D3A':'var(--ink)',bx:p.x-10,by:p.y-10,iy:p.y+5,sel,wet:!!wl,wx:p.x+10,wy:p.y-10,showLabel:!isBus||sel,name:p.name,lx:p.x+p.lx,ly:p.y+p.ly,anchor:p.anchor,fs:isBus?'13px':'15px',aria:`${p.name} ${isBus?'bus stop':'MRT station'}`,onClick:()=>this.openStop(p.id),onKey:e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();this.openStop(p.id)}}}});
+    const sp=s.stop&&this.place(s.stop);
+    let mapTf='none';
+    if(s.zoom>1){const fx=isMap&&sp?sp.x:500,fy=isMap&&sp?sp.y:320;mapTf=`translate(500px,320px) scale(${s.zoom}) translate(${-fx}px,${-fy}px)`;}
+    const lineOp=active&&screen!=='home'?.35:.9;
+
+    // stop detail
+    let sd={};
+    if(sp){const w=this.wxInfo(this.wxAt(sp.x,sp.y));const loadL=['Seats available','Seats available','Standing','Limited standing'],loadC=['#00A85A','#00A85A','#E0A100','#D42E12'];
+      const reps=s.reports.filter(r=>r.stop===sp.id).sort((a,b)=>b.at-a.at).slice(0,3).map(r=>({label:TY[r.type].label,icon:TY[r.type].icon,c:TY[r.type].c,ago:ago(T-r.at),note:r.note||'No comment',anim:s.flash===r.id?'rwFlash 1.4s ease':'none'}));
+      sd={name:sp.name,kindIcon:sp.kind==='bus'?'directions_bus':'train',kindLabel:sp.kind==='bus'?`Bus stop`:'MRT station',chips:this.chips(sp),wxIcon:w.icon,wxLabel:w.label,wxBg:w.bg,wxFg:w.fg,shIcon:shI[sp.sh],shLabel:shL[sp.sh],shBg:sp.sh===2?'#DDF3E5':sp.sh===1?'#FDEBC8':'#FBD9D0',shFg:sp.sh===2?'#0B4D2A':sp.sh===1?'#4A3200':'#5C1606',note:sp.note,
+        arr:sp.arr.map(a=>{const sec=nextS(a.p,a.o);const c=this.svc(a.s);const t=arrT(sec);return{svc:a.s,bg:c.bg,fg:c.fg,d:a.d,t,t2:arrT(sec+a.p),tc:t==='Arr'?'#E85D3A':'var(--ink)',anim:t==='Arr'?'rwBlink 1s infinite':'none',load:loadL[a.l],loadC:loadC[a.l]}}),
+        reps,hasReps:reps.length>0,noReps:reps.length===0,quick:this.TYPES.map(t=>({label:t.label,icon:t.icon,c:t.c,onClick:()=>this.post(t.id,sp.id)})),
+        onPlan:()=>{this.setState({origin:sp.name});this.go('home');this.plan();}};
+    }
+    const q=s.stopQ.trim().toLowerCase();
+    const stopList=this.STOPS.filter(p=>!q||p.name.toLowerCase().includes(q)).map(p=>{const w=this.wxInfo(this.wxAt(p.x,p.y));return{name:p.name,chips:this.chips(p),kindIcon:p.kind==='bus'?'directions_bus':'train',wxIcon:w.icon,wxLabel:w.label,wxC:w.c,onClick:()=>this.openStop(p.id)}});
+    const layerChips=[['rain','Rain','rainy'],['mrt','MRT','train'],['bus','Bus stops','directions_bus'],['route','Route','alt_route']].map(([id,label,icon])=>{const on=s.layers[id];return{label,icon,on,bg:on?'var(--ink)':'var(--surf)',fg:on?'var(--surf)':'var(--ink2)',bd:on?'var(--ink)':'var(--line)',onClick:()=>{this.buzz();this.setState(st=>({layers:Object.assign({},st.layers,{[id]:!st.layers[id]})}))}}});
+    const routeChips=R.map(r=>{const on=s.sel===r.id;return{name:r.name,bg:on?'#E85D3A':'var(--surf)',fg:on?'#111':'var(--ink)',onClick:()=>{this.buzz();this.setState({sel:r.id,layers:Object.assign({},s.layers,{route:true})})}}});
+
+    // saved
+    const savedView=[...this.SAVED].sort((a,b)=>(s.savedPinned.includes(b.id)?1:0)-(s.savedPinned.includes(a.id)?1:0)).map(r=>{const pinned=s.savedPinned.includes(r.id);const on=!!s.alertsOn[r.id];const f=r.fc[wx];return{name:r.name,from:r.from,to:r.to,when:r.when,dur:r.dur,pinned,pinBg:pinned?'#E85D3A':'var(--surf)',pinFg:pinned?'#111':'var(--ink2)',pinFill:pinned?1:0,bd:pinned?'var(--ink)':'var(--line)',
+      legs:r.legs.map(k=>k==='walk'?{bg:'var(--chip)',fg:'var(--ink2)',icon:'directions_walk',text:''}:{bg:L[k][0],fg:L[k][1],icon:'train',text:k}),
+      fc:f[0],fcIcon:f[1],fcBg:f[2]?'#2E6BD8':'var(--surf2)',fcFg:f[2]?'#fff':'var(--ink)',alertOn:on,trackBg:on?'#00A85A':'var(--line)',knob:on?'translateX(18px)':'none',
+      onPin:()=>{this.buzz();this.setState(st=>({savedPinned:st.savedPinned.includes(r.id)?st.savedPinned.filter(x=>x!==r.id):[...st.savedPinned,r.id]}))},
+      onAlert:()=>{this.buzz();this.setState(st=>({alertsOn:Object.assign({},st.alertsOn,{[r.id]:!st.alertsOn[r.id]})}))},
+      onPlan:()=>{this.setState({origin:r.from,dest:r.to});if(r.id==='s2'){this.go('routes')}else{this.go('home');this.plan();}}}});
+    const toneC={rain:['#2E6BD8','#fff'],time:['#FA9E0D','#111'],ok:['#00A85A','#fff']};
+    const alerts=this.ALERTS.filter(a=>!s.dismissed.includes(a.id)).map(a=>({when:a.when,title:a.title,body:a.body,icon:a.icon,act:a.act,bg:toneC[a.tone][0],fg:toneC[a.tone][1],
+      onDismiss:()=>{this.buzz();this.setState(st=>({dismissed:[...st.dismissed,a.id]}))},
+      onAct:()=>{this.showToast(a.toast);this.setState(st=>({dismissed:[...st.dismissed,a.id]}))},
+      onView:()=>{const r=this.SAVED.find(x=>x.id===a.route);this.setState({origin:r.from,dest:r.to});this.go(a.route==='s2'?'routes':'home');}}));
+    const onCount=Object.values(s.alertsOn).filter(Boolean).length;
+
+    // reports
+    const rq=s.rQ.trim().toLowerCase();
+    let reps=s.reports.filter(r=>{if(s.rFilter!=='all'&&r.type!==s.rFilter)return false;if(!rq)return true;const p=this.place(r.stop);return (p.name+' '+r.note+' '+TY[r.type].label+' '+(p.codes||[]).map(c=>c[1]).join(' ')).toLowerCase().includes(rq);});
+    reps.sort(s.rSort==='newest'?(a,b)=>b.at-a.at:s.rSort==='oldest'?(a,b)=>a.at-b.at:(a,b)=>b.c-a.c);
+    const feed=reps.map(r=>{const p=this.place(r.stop),t=TY[r.type];const conf=s.confirmed.includes(r.id);const n=r.c+(conf?1:0);return{label:t.label,icon:t.icon,c:t.c,stopName:p.name,chips:this.chips(p),note:r.note,hasNote:!!r.note,mine:!!r.mine,ago:ago(T-r.at),cText:`${n} confirmed`,confirms:n,conf,cBg:conf?'var(--ink)':'var(--surf)',cFg:conf?'var(--surf)':'var(--ink)',cFill:conf?1:0,anim:s.flash===r.id?'rwFlash 1.4s ease, rwUp .35s ease':'none',
+      onConfirm:()=>{this.buzz();this.setState(st=>({confirmed:st.confirmed.includes(r.id)?st.confirmed.filter(x=>x!==r.id):[...st.confirmed,r.id]}))}}});
+    const counts={};s.reports.forEach(r=>counts[r.type]=(counts[r.type]||0)+1);
+    const filterChips=[{id:'all',label:'All',c:'var(--ink)'}].concat(this.TYPES).map(t=>{const on=s.rFilter===t.id;return{label:t.label,c:t.c,n:t.id==='all'?s.reports.length:(counts[t.id]||0),on,bg:on?'var(--ink)':'var(--surf)',fg:on?'var(--surf)':'var(--ink)',bd:on?'var(--ink)':'var(--line)',onClick:()=>{this.buzz();this.setState({rFilter:t.id})}}});
+    const sortRep=[['newest','Newest'],['oldest','Oldest'],['confirmed','Most confirmed']].map(([id,label])=>{const on=s.rSort===id;return{label,on,bg:on?'var(--surf)':'transparent',fg:on?'var(--ink)':'var(--ink2)',sh:on?'0 1px 3px rgba(0,0,0,.12)':'none',onClick:()=>this.setState({rSort:id})}});
+    const placeIds=['brasbasah','b-smu','dhoby','cityhall','bugis','orchard','harbourfront','bishan','payalebar','tampines','changi','jurong'];
+    const placeChips=placeIds.map(id=>{const p=this.place(id);const on=s.newStop===id;return{name:p.name,on,bg:on?'var(--ink)':'var(--surf)',fg:on?'var(--surf)':'var(--ink)',bd:on?'var(--ink)':'var(--line)',onClick:()=>this.setState({newStop:id})}});
+    const typeBtns=this.TYPES.map(t=>({label:t.label,icon:t.icon,c:t.c,onClick:()=>this.post(t.id,s.newStop)}));
+    const hc={};s.reports.filter(r=>T-r.at<3600).forEach(r=>hc[r.stop]=(hc[r.stop]||0)+1);
+    const hotspots=Object.entries(hc).sort((a,b)=>b[1]-a[1]).slice(0,4).map(([id,n])=>({name:this.place(id).name,n:`${n} report${n>1?'s':''}`}));
+    const repPreview=[...s.reports].sort((a,b)=>b.at-a.at).slice(0,3).map(r=>({label:TY[r.type].label,icon:TY[r.type].icon,c:TY[r.type].c,stopName:this.place(r.stop).name,ago:ago(T-r.at)}));
+
+    // nav
+    const tabs=[['home','Home','home'],['routes','Routes','alt_route'],['map','Map','map'],['saved','Saved','bookmark'],['reports','Reports','forum']].map(([id,label,icon])=>{const on=screen===id;return{label,icon,cur:on?'page':'false',bg:on?'#fff':'transparent',fg:on?'#111':'#d6d6d6',mfg:on?'var(--ink)':'var(--ink3)',bar:on?'#E85D3A':'transparent',fill:on?1:0,onClick:()=>this.go(id,id==='map'?{}:{})}});
+    const wxOpts=[['clear','Clear','sunny'],['light','Light rain','rainy'],['heavy','Heavy rain','thunderstorm']].map(([id,label,icon])=>{const on=wx===id;return{label,icon,on,bg:on?(id==='clear'?'#FA9E0D':'#2E6BD8'):'transparent',fg:on?(id==='clear'?'#111':'#fff'):'#cfcfcf',onClick:()=>{this.buzz();this.setState({wx:id,wxAt:this.state.tick,auto:false})}}});
+    const tourOn=s.tour>=0, ts=tourOn?this.TOUR[s.tour]:{};
+
+    const greeting={heavy:'Morning, Wei Ling. Bring umbrella hor.',light:'Morning, Wei Ling. A bit drizzly out.',clear:'Morning, Wei Ling. Steady weather today.'}[wx];
+    const wxChip=wx==='heavy'?['#2E6BD8','#fff']:wx==='light'?['var(--surf)','var(--ink)']:['#FDEBC8','#3D2A00'];
+
+    return {
+      themeKey:(s.dark?'dark':'light')+'-'+wx, rainRef:this.rainRef, bottomPad:narrow?'76px':'0',
+      wide, narrow, full:!s.compact, compact:!!s.compact, tabs, wxOpts, auto:s.auto, autoBg:s.auto?'#E85D3A':'transparent', autoFg:s.auto?'#111':'#fff', autoDot:s.auto?'#111':'#777', autoAnim:s.auto?'rwBlink 1s infinite':'none',
+      toggleAuto:()=>{this.buzz();this.setState(st=>({auto:!st.auto,autoAt:st.tick,autoIdx:['clear','light','heavy'].indexOf(st.wx)}))},
+      a11y:s.a11y, a11yBg:s.a11y?'#fff':'transparent', a11yFg:s.a11y?'#111':'#fff', toggleA11y:()=>this.setState(st=>({a11y:!st.a11y})),
+      toggleDark:()=>{this.buzz();this.setState(st=>({dark:!st.dark}))}, themeIcon:s.dark?'light_mode':'dark_mode', startTour:()=>this.tourGo(0),
+      mainDir:narrow?'column':'row', paneW:narrow?'100%':({home:'min(600px,52vw)',routes:'min(720px,56vw)',map:'min(410px,42vw)'}[screen]||'100%'), paneFlex:showMap&&!narrow?'0 0 auto':'1 1 auto',
+      paneOrder:narrow&&isMap?2:0, panePad:narrow?'16px':'20px', mapOrder:narrow&&isMap?0:2, mapPos:narrow?'relative':'sticky', mapH:narrow?(isMap?'58vh':'380px'):'calc(100vh - 67px)', mapPad:narrow?(isMap?'16px 16px 0':'0 16px 16px'):'20px 20px 20px 0',
+      isHome:screen==='home', isRoutes:screen==='routes', isMap, isSaved:screen==='saved', isReports:screen==='reports', showMap, notMapScreen:!isMap,
+      goHome:()=>this.go('home'), goRoutes:()=>this.go('routes'), goMap:()=>this.go('map'), goSaved:()=>this.go('saved'), goReports:()=>this.go('reports'),
+      clockStr:fmt(base), greeting, wxIcon:W.icon, wxTitle:W.title, wxMeta:W.meta, wxSub:W.sub, wxTileBg:W.tile, wxTileFg:W.tfg, rainBars, barsLabel:`Rain chance next hour: starts at ${W.bars[0]}%, ends at ${W.bars[11]}%`,
+      wxMapChip:W.chip, wxChipBg:wxChip[0], wxChipFg:wxChip[1],
+      origin:s.origin, dest:s.dest, onOrigin:e=>this.setState({origin:e.target.value}), onDest:e=>this.setState({dest:e.target.value}),
+      swap:()=>{this.buzz();this.setState(st=>({origin:st.dest,dest:st.origin}))},
+      destChips:['VivoCity','Changi Airport','Tampines Hub','Jurong East'].map(d=>({label:d,bg:s.dest===d?'var(--ink)':'var(--surf)',fg:s.dest===d?'var(--surf)':'var(--ink)',onClick:()=>{this.buzz();this.setState({dest:d})}})),
+      whenOpts:[['now','Depart now'],['later','Leave at 9:00 AM'],['arrive','Arrive by 9:30 AM']].map(([id,label])=>{const on=s.when===id;return{label,on,bg:on?'var(--surf)':'transparent',fg:on?'var(--ink)':'var(--ink2)',sh:on?'0 1px 3px rgba(0,0,0,.14)':'none',onClick:()=>this.setState({when:id})}}),
+      whenLabel:{now:'Depart now',later:'Leave at 9:00 AM',arrive:'Arrive by 9:30 AM'}[s.when],
+      plan:()=>this.plan(), analysing:s.analysing, notAnalysing:!s.analysing,
+      routeLabel:`${s.origin} → ${s.dest}`, recKey:(waiting?'w':'g')+wx, recHeadline:waiting?`Wait ${Math.ceil(remain/60)} min`:'Leave now', recColor, recReason, recChips, recCompare,
+      recOutline:waiting?'rgba(141,182,255,.35)':'rgba(110,231,160,.35)',
+      ringDash:waiting?`${(remain/totalW*213.6).toFixed(1)} 213.6`:'213.6 213.6', ringText:waiting?`${Math.floor(remain/60)}:${pad(remain%60)}`:(arrT(neNext)==='Arr'?'Now':arrT(neNext)), ringSub:waiting?`leave ${fmt(base+remain)}`:'next NE train',
+      remind:s.remind, remindLabel:s.remind?'Reminder set':`Remind me at ${fmt(base+remain)}`, remindIcon:s.remind?'notifications_active':'notifications', remindBg:s.remind?'#fff':'transparent', remindFg:s.remind?'#111':'#fff',
+      toggleRemind:()=>{const on=!this.state.remind;this.setState({remind:on});if(on)this.showToast(`Okay! We'll buzz you at ${fmt(base+remain)}.`);},
+      nearby, savedShort:this.SAVED.filter(r=>s.savedPinned.includes(r.id)).concat(this.SAVED.filter(r=>!s.savedPinned.includes(r.id))).slice(0,3).map(r=>({label:`${r.from} → ${r.to}`,when:r.when,icon:s.savedPinned.includes(r.id)?'push_pin':'bookmark',onClick:()=>{this.setState({origin:r.from,dest:r.to});this.plan();}})),
+      repPreview,
+      conditions, sortOpts, cards,
+      layerChips, routeChips, hasStop:!!sp, noStop:!sp, sd, stopKey:s.stop||'none', closeStop:()=>this.setState({stop:null,zoom:1}), stopQ:s.stopQ, onStopQ:e=>this.setState({stopQ:e.target.value}), stopList,
+      showZones:s.layers.rain, zones, showMrt:s.layers.mrt, lineOp, routeSegs, flowSegs, faintSegs, wetMarks, mapStops, mapTf,
+      zoomIn:()=>this.setState(st=>({zoom:Math.min(2.4,+(st.zoom+.4).toFixed(1))})), zoomOut:()=>this.setState(st=>({zoom:Math.max(1,+(st.zoom-.4).toFixed(1))})), recenter:()=>this.setState({zoom:1,stop:null}),
+      tracing:!!(s.hover&&showMap), tracingLabel:s.hover?`Tracing: ${byId[s.hover].name}`:'',
+      alerts, noAlerts:alerts.length===0, restoreAlerts:()=>this.setState({dismissed:[]}), alertSummary:`Rain alerts on for ${onCount} of ${this.SAVED.length} routes`, savedView, savedCols:narrow?'1fr':'minmax(0,1fr) minmax(0,1.6fr)',
+      repCols:narrow?'1fr':'minmax(0,380px) minmax(0,1fr)', repSticky:narrow?'static':'sticky', placeChips, typeBtns, hotspots, rQ:s.rQ, onRQ:e=>this.setState({rQ:e.target.value}), sortRep, filterChips, feed, feedEmpty:feed.length===0, clearRepFilter:()=>this.setState({rFilter:'all',rQ:''}),
+      tourOn, tourKey:'t'+s.tour, tourIdx:tourOn?`${s.tour+1} / ${this.TOUR.length}`:'', tourTitle:ts.title, tourBody:ts.body, tourDots:this.TOUR.map((_,i)=>({c:i<=s.tour?'#E85D3A':'#333'})),
+      tourNext:()=>this.tourGo(s.tour+1), tourBack:()=>this.tourGo(Math.max(0,s.tour-1)), tourExit:()=>this.setState({tour:-1}), tourNextLabel:s.tour===this.TOUR.length-1?'Finish':'Next',
+      tourR:narrow?'12px':'24px', tourL:narrow?'12px':'auto', tourB:narrow?'84px':'24px', tourW:narrow?'auto':'380px',
+      onboard:s.onboard, onboardTour:()=>this.closeOnboard(true), onboardSkip:()=>this.closeOnboard(false),
+      hasToast:!!s.toast, toast:s.toast, toastKey:'k'+s.toastN
+    };
+  }
+}
+</script>
+</body>
+</html>

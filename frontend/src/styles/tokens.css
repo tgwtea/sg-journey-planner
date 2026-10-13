@@ -1,0 +1,37 @@
+/*
+ * Design tokens copied from design/RouteWise v2.dc.html.
+ * The mockup is the source of truth. Change a value there first.
+ */
+[data-rwroot] {
+  --bg: #DCE2E8; --ink: #12161C; --ink2: #565D67; --ink3: #878E98;
+  --glass: rgba(255,255,255,.5); --glassHi: rgba(255,255,255,.84); --glassBd: rgba(255,255,255,.72);
+  --glassSh: inset 0 1px 0 rgba(255,255,255,.65), 0 10px 36px rgba(28,38,52,.08);
+  --glassShHi: inset 0 1px 0 rgba(255,255,255,.65), 0 18px 48px rgba(28,38,52,.18);
+  --chip: rgba(18,24,32,.055); --field: rgba(255,255,255,.55);
+  --line: rgba(18,24,32,.08); --lineS: rgba(18,24,32,.18);
+  --solid: #14181E; --onSolid: #FFFFFF; --surf: #FFFFFF; --halo: #E6EAEE;
+  --land: rgba(233,237,241,.86); --sea: rgba(203,212,222,.92); --park: rgba(219,225,228,.92);
+  --road: rgba(255,255,255,.95); --rain: #3A424D;
+}
+[data-rwroot][data-rw="dark"] {
+  --bg: #10141A; --ink: #EDF0F4; --ink2: #A2A9B3; --ink3: #6D747E;
+  --glass: rgba(24,28,35,.52); --glassHi: rgba(28,33,40,.88); --glassBd: rgba(255,255,255,.09);
+  --glassSh: inset 0 1px 0 rgba(255,255,255,.05), 0 10px 36px rgba(0,0,0,.3);
+  --glassShHi: inset 0 1px 0 rgba(255,255,255,.06), 0 18px 48px rgba(0,0,0,.5);
+  --chip: rgba(255,255,255,.06); --field: rgba(255,255,255,.05);
+  --line: rgba(255,255,255,.08); --lineS: rgba(255,255,255,.2);
+  --solid: #EDF0F4; --onSolid: #12161C; --surf: #1A1F26; --halo: #171B21;
+  --land: rgba(25,29,35,.88); --sea: rgba(15,19,25,.92); --park: rgba(31,37,42,.92);
+  --road: rgba(50,56,64,.92); --rain: #C3CCD6;
+}
+
+/*
+ * Sky backgrounds per weather condition (Morning palette from the mockup SKY table).
+ * The mockup animates these on a canvas. Here they are static gradients.
+ */
+[data-rwroot][data-wx="clear"] { --sky: linear-gradient(180deg, #BFCEDD, #DCE3EB 55%, #EEEDEB); }
+[data-rwroot][data-wx="light"] { --sky: linear-gradient(180deg, #B5BFC9, #D3D9DF 55%, #E5E7EA); }
+[data-rwroot][data-wx="heavy"] { --sky: linear-gradient(180deg, #98A2AD, #BCC4CC 55%, #D4D8DD); }
+[data-rwroot][data-rw="dark"][data-wx="clear"] { --sky: linear-gradient(180deg, #0A0E15, #121823 55%, #1A202A); }
+[data-rwroot][data-rw="dark"][data-wx="light"] { --sky: linear-gradient(180deg, #0D1116, #161B22 55%, #1C2128); }
+[data-rwroot][data-rw="dark"][data-wx="heavy"] { --sky: linear-gradient(180deg, #090C10, #11151A 55%, #161A1F); }
