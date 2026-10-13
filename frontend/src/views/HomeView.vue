@@ -55,8 +55,7 @@ const details = computed(() => {
 
     <GlassCard title="Rain · next 60 min" icon="water_drop">
       <p class="rw-copy">
-        Rain information for your area shows here. The rain chart from the mockup needs a
-        near-term rain source. See docs/WEATHER_API.md.
+        A minute-by-minute rain chart for the next hour will show here.
       </p>
     </GlassCard>
 

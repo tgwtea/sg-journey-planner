@@ -2,10 +2,9 @@ import { ref } from 'vue';
 import { fetchWeather } from '../services/weatherService.js';
 
 /**
- * Weather state for one area. STUDENT-OWNED.
+ * Weather state for one area.
  *
  * The refs below match the WeatherHero props, so a view can pass them in.
- * See docs/WEATHER_API.md for the checklist.
  *
  * @param {string} area
  */

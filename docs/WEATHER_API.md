@@ -80,11 +80,11 @@ The response has `access-control-allow-origin: *`.
 | --- | --- |
 | `backend/src/routes/weather.routes.js` | Done. `GET /api/weather?area=City` |
 | `backend/src/controllers/weather.controller.js` | Done. Calls the service, sends JSON. |
-| `backend/src/services/weather.service.js` | **Stub.** Throws HTTP 501. |
-| `frontend/src/services/weatherService.js` | **Stub.** `fetchWeather(area)` throws. |
-| `frontend/src/composables/useWeather.js` | **Stub.** `refresh()` does nothing. |
+| `backend/src/services/weather.service.js` | Done. Forecast, temperature, rainfall. 60 s cache. |
+| `frontend/src/services/weatherService.js` | Done. `fetchWeather(area)` |
+| `frontend/src/composables/useWeather.js` | Done. `refresh()` sets the hero state. |
 | `frontend/src/components/WeatherHero.vue` | Done. Shows idle, loading, success, empty, error. Emits `refresh`. |
-| `frontend/src/views/HomeView.vue` | Done. Connects `useWeather` to `WeatherHero`. |
+| `frontend/src/views/HomeView.vue` | Done. Loads the weather on open. |
 
 ## Student checklist
 

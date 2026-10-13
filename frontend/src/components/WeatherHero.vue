@@ -2,7 +2,7 @@
 import { computed } from 'vue';
 
 // Presentational only. It renders what it gets and emits `refresh`.
-// The data comes from composables/useWeather.js (student-owned).
+// The data comes from composables/useWeather.js.
 const props = defineProps({
   // 'idle' | 'loading' | 'success' | 'empty' | 'error'
   status: { type: String, default: 'idle' },

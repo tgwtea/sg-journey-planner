@@ -23,7 +23,6 @@
           "name": "Weather (City)",
           "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/weather?area=City", "host": ["{{baseUrl}}"], "path": ["weather"], "query": [{ "key": "area", "value": "City" }] } },
           "event": [{ "listen": "test", "script": { "exec": [
-            "// Returns 501 until weather.service.js is implemented.",
             "pm.test('status 200', () => pm.response.to.have.status(200));",
             "pm.test('has condition', () => pm.expect(['clear','light','heavy']).to.include(pm.response.json().condition));"
           ] } }]

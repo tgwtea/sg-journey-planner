@@ -3,7 +3,7 @@ import { env } from '../config/env.js';
 export const DATA_GOV_BASE_URL = 'https://api-open.data.gov.sg/v2/real-time/api';
 
 // Cloudflare blocks some default user agents. See docs/WEATHER_API.md, limit 5.
-const USER_AGENT = 'Mozilla/5.0 (compatible; RouteWise/0.1; +https://github.com)';
+const USER_AGENT = 'Mozilla/5.0 (compatible; RouteWise/0.1; +https://github.com/tgwtea/sg-journey-planner)';
 const CACHE_TTL_MS = 60 * 1000;
 const TIMEOUT_MS = 8000;
 

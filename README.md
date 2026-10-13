@@ -3,7 +3,7 @@
 A weather-aware public transport journey planner for Singapore.
 IS216 Web Application Development, G5, Group 8. See `docs/PROPOSAL.md`.
 
-Live data today: **weather only** (in progress). All other screens use mock data.
+Live data today: **weather only**. All other screens use mock data.
 
 ## Requirements
 
