@@ -1,32 +1,24 @@
 <script setup>
-import { computed, inject, onMounted, ref, watch } from 'vue';
+import { computed, inject, onMounted, ref } from 'vue';
 import WeatherHero from '../components/WeatherHero.vue';
 import GlassCard from '../components/GlassCard.vue';
 import FeaturePlaceholder from '../components/FeaturePlaceholder.vue';
 import MockList from '../components/MockList.vue';
-import { useWeather } from '../composables/useWeather.js';
-import { getNearbyStops } from '../services/mockService.js';
+import { useWeatherMode } from '../composables/useWeatherMode.js';
+import { getStops } from '../services/mockService.js';
 
 const ui = inject('ui');
 
 // "Bras Basah" in the mockup is not a forecast area. "City" is the nearest one.
-const { area, status, weather, errorMessage, refresh } = useWeather('City');
-
-// When live data arrives, let it drive the sky look.
-watch(
-  () => weather.value?.condition,
-  (condition) => {
-    if (condition) ui.wx = condition;
-  },
-);
+// The app fetches it once in useWeatherMode, which also drives the sky.
+const { area, status, weather, errorMessage, refresh } = useWeatherMode().live;
 
 // Mock data until transport fixtures exist.
 const stops = ref([]);
-onMounted(async () => { stops.value = (await getNearbyStops()).slice(0, 3); });
+onMounted(async () => { stops.value = (await getStops()).slice(0, 3); });
 
-onMounted(refresh);
 const nearbyRows = computed(() => stops.value.map((s) => ({
-  id: s.id, icon: s.kind === 'mrt' ? 'train' : 'directions_bus', title: s.name, sub: s.note, meta: s.code,
+  id: s.id, icon: s.kind === 'mrt' ? 'train' : 'directions_bus', title: s.name, sub: s.note, meta: s.code || s.codes.map((c) => c[1]).join(' / '),
 })));
 
 const details = computed(() => {

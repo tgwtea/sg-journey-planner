@@ -3,12 +3,18 @@ import { computed, provide, reactive } from 'vue';
 import { useRoute } from 'vue-router';
 import AppHeader from './components/AppHeader.vue';
 import BottomTabBar from './components/BottomTabBar.vue';
+import SkyCanvas from './components/SkyCanvas.vue';
+import ToastHost from './components/ToastHost.vue';
+import OnboardingModal from './components/OnboardingModal.vue';
+import TourCard from './components/TourCard.vue';
+import { useWeatherMode } from './composables/useWeatherMode.js';
+import { useTour } from './composables/useTour.js';
 
-// App-wide UI state (not weather data).
-// `wx` is the sky look: 'clear' | 'light' | 'heavy'.
-// The header switch sets it for demos. Live weather can set it later.
-// `pal` is the colour palette: 'vivid' (default) | 'calm'.
-const ui = reactive({ dark: false, wx: 'clear', pal: 'vivid' });
+const { wx } = useWeatherMode();
+useTour();
+
+// Shared UI state. wx is the current condition: live, or the header override.
+const ui = reactive({ dark: false, wx, pal: 'vivid' });
 provide('ui', ui);
 
 const route = useRoute();
@@ -17,11 +23,15 @@ const columnWidth = computed(() => route.meta.width || '1180px');
 
 <template>
   <div data-rwroot="1" :data-rw="ui.dark ? 'dark' : 'light'" :data-pal="ui.pal" :data-wx="ui.wx" class="rw-root">
+    <SkyCanvas :wx="ui.wx" :dark="ui.dark" />
     <AppHeader />
     <main class="rw-main" :style="{ maxWidth: columnWidth }">
       <RouterView />
     </main>
     <BottomTabBar />
+    <TourCard />
+    <OnboardingModal />
+    <ToastHost />
   </div>
 </template>
 
@@ -32,7 +42,7 @@ const columnWidth = computed(() => route.meta.width || '1180px');
   background: var(--sky, var(--bg));
   background-attachment: fixed;
   color: var(--ink);
-  transition: color .4s ease;
+  transition: color .6s ease, background .8s ease;
 }
 .rw-main {
   position: relative;

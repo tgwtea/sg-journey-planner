@@ -49,6 +49,12 @@ a:hover { color: var(--ink2); }
 @keyframes rwBlink { 50% { opacity: .25; } }
 @keyframes rwLoad { from { width: 0; } to { width: 100%; } }
 @keyframes rwSpin { to { transform: rotate(360deg); } }
+@keyframes rwSlide { from { opacity: 0; transform: translateX(-12px); } to { opacity: 1; transform: none; } }
+@keyframes rwRing { from { transform: scale(.7); opacity: .8; } to { transform: scale(2.6); opacity: 0; } }
+@keyframes rwBreath { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+@keyframes rwDrift { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(12px, 5px); } }
+@keyframes rwDash { to { stroke-dashoffset: -48; } }
+@keyframes rwFlash { from { box-shadow: 0 0 0 2px var(--ink); } to { box-shadow: 0 0 0 2px transparent; } }
 
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
