@@ -25,9 +25,10 @@ test('home renders the weather hero and the tab bar', async ({ page }) => {
 test('every tab opens its screen', async ({ page }) => {
   await page.goto('/');
   for (const [tab, path] of [['Routes', '/routes'], ['Map', '/map'], ['Saved', '/saved'], ['Reports', '/reports']]) {
-    await page.getByRole('link', { name: tab }).click();
+    const link = page.getByRole('navigation', { name: 'Main' }).getByRole('link', { name: tab, exact: true });
+    await link.click();
     await expect(page).toHaveURL(new RegExp(`${path}$`));
-    await expect(page.getByRole('link', { name: tab })).toHaveAttribute('aria-current', 'page');
+    await expect(link).toHaveAttribute('aria-current', 'page');
   }
 });
 
