@@ -4,6 +4,23 @@
 // "in rain" when it is inside a circle. Replace the body with real stop data
 // (LTA) and real forecast areas (data.gov.sg). Keep the return shape.
 //
+// Returns:
+//   stops         ref([...])           all map stops (mockService shape)
+//   zones         computed([...])      rain cells for the current weather
+//   forecast      computed({ title, temp, hl, sub, icon, chip, bars }) demo copy for the current weather
+//   mapStops      computed([...])      stops for RwMap: { id, name, kind, lat, lng, wet, big }
+//   trip          ref({ origin, dest }) trip end points for the map
+//   nearby        computed([...])      nearby stops for Home, with weather and arrivals
+//   selectedStop  ref(id | null)
+//   rainAt(lat, lng)  'heavy' | 'light' | null
+//   wxInfo(level)     { label, icon, c }
+//   place(id)         a stop or extra place
+//   chips(place)      line/code chips [{ t, bg, fg }]
+//   openStop(id)      select a stop and open the Map screen
+//   closeStop()
+//   layers        ref({ rain, mrt, bus, route }), toggleLayer(id)
+//   stopQuery     ref(''), stopList computed([...]) search results for the Map panel
+//   stopDetail    computed(null | { id, name, kindIcon, kindLabel, chips, wxIcon, wxLabel, shIcon, shLabel, note, arr: [...] })
 // Shared map, stop, and weather data used by the Home and Map screens.
 
 import { computed, ref, watch } from 'vue';
