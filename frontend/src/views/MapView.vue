@@ -4,8 +4,19 @@ import FeaturePlaceholder from '../components/FeaturePlaceholder.vue';
 import MockList from '../components/MockList.vue';
 import { getNearbyStops } from '../services/mockService.js';
 
+// OneMap - amanda
+import { useTemplateRef } from 'vue'
+import OneMap from '../components/OneMap.vue';
+const oneMapRef = useTemplateRef('oneMap')
+
 const stops = ref([]);
-onMounted(async () => { stops.value = await getNearbyStops(); });
+
+onMounted(async () => { 
+  stops.value = await getNearbyStops();
+
+  // OneMap - amanda
+  oneMapRef.value?.initialiseOneMap()
+});
 
 const shelter = ['Unsheltered', 'Partly sheltered', 'Sheltered'];
 const rows = computed(() => stops.value.map((s) => ({
@@ -25,4 +36,8 @@ const rows = computed(() => stops.value.map((s) => ({
   >
     <MockList :items="rows" />
   </FeaturePlaceholder>
+
+  <!-- OneMap - amanda -->
+  <OneMap ref="oneMap" />
+
 </template>

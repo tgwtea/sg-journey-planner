@@ -22,8 +22,10 @@
     "concurrently": "^10.0.6"
   },
   "dependencies": {
+    "@vue-leaflet/vue-leaflet": "^0.10.1",
     "cors": "^2.8.6",
     "dotenv": "^18.0.7",
+    "leaflet": "^1.9.4",
     "mongoose": "^9.11.1"
   }
 }
