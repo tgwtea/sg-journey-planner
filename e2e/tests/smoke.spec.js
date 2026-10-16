@@ -1,5 +1,11 @@
 import { test, expect } from '@playwright/test';
 
+// Skip the first-visit welcome dialog, except in the test that checks it.
+test.beforeEach(async ({ page }, testInfo) => {
+  if (testInfo.title.startsWith('onboarding')) return;
+  await page.addInitScript(() => localStorage.setItem('rw_onboarded', '1'));
+});
+
 test('API health check responds', async ({ request }) => {
   const res = await request.get('/api/health');
   expect(res.ok()).toBeTruthy();
@@ -37,10 +43,48 @@ test('home loads the weather on open', async ({ page }) => {
   await expect(page.getByText('Loading weather…')).toHaveCount(0, { timeout: 15000 });
 });
 
-test('weather switch changes the sky', async ({ page }) => {
+test('weather follows live data until the switch overrides it', async ({ page }) => {
   await page.goto('/');
-  // Wait for the live fetch, so its condition does not overwrite the switch.
-  await expect(page.getByText('Loading weather…')).toHaveCount(0, { timeout: 15000 });
+  await expect(page.getByRole('radio', { name: 'Live' })).toHaveAttribute('aria-checked', 'true');
   await page.getByRole('radio', { name: 'Heavy rain' }).click();
   await expect(page.locator('[data-rwroot]')).toHaveAttribute('data-wx', 'heavy');
+  await page.getByRole('radio', { name: 'Clear' }).click();
+  await expect(page.locator('[data-rwroot]')).toHaveAttribute('data-wx', 'clear');
+});
+
+test('dark mode toggle switches the theme', async ({ page }) => {
+  await page.goto('/');
+  const root = page.locator('[data-rwroot]');
+  await expect(root).toHaveAttribute('data-rw', 'light');
+  await page.getByRole('button', { name: 'Toggle dark mode' }).click();
+  await expect(root).toHaveAttribute('data-rw', 'dark');
+});
+
+test('onboarding shows on the first visit and closes', async ({ page }) => {
+  await page.goto('/');
+  const dialog = page.getByRole('dialog', { name: 'Welcome to RouteWise' });
+  await expect(dialog).toBeVisible();
+  await page.getByRole('button', { name: 'Explore on my own' }).click();
+  await expect(dialog).toHaveCount(0);
+  await page.reload();
+  await expect(dialog).toHaveCount(0);
+});
+
+test('guided tour moves across screens', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'The tour button shows on wide screens only.');
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Start guided tour' }).click();
+  const tour = page.getByRole('dialog', { name: 'Guided tour' });
+  await expect(tour).toContainText('1 / 9');
+  for (let i = 0; i < 3; i += 1) await tour.getByRole('button', { name: 'Next' }).click();
+  await expect(page).toHaveURL(/\/routes$/);
+  await tour.getByRole('button', { name: 'End tour' }).click();
+  await expect(tour).toHaveCount(0);
+});
+
+test('map screen loads OneMap tiles and stop markers', async ({ page }) => {
+  await page.goto('/map');
+  await expect(page.locator('.leaflet-tile-loaded').first()).toBeVisible({ timeout: 15000 });
+  await expect(page.locator('.leaflet-control-attribution')).toContainText('OneMap');
+  await expect(page.getByTitle('Dhoby Ghaut MRT station')).toBeVisible();
 });

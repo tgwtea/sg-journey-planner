@@ -13,7 +13,7 @@ onMounted(async () => {
 const ago = (sec) => (sec < 3600 ? `${Math.max(1, Math.round(sec / 60))} min ago` : `${Math.round(sec / 3600)} h ago`);
 const rows = computed(() => reports.value.map((r) => {
   const t = types.value.find((x) => x.id === r.type) || {};
-  return { id: r.id, icon: t.icon, title: `${t.label || r.type} at ${r.place}`, sub: r.note, meta: ago(r.ageSec) };
+  return { id: r.id, icon: t.icon, title: `${t.label || r.type} at ${r.stop}`, sub: r.note, meta: ago(r.ageSec) };
 }));
 </script>
 
