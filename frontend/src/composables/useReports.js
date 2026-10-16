@@ -11,14 +11,18 @@
 //   placeName(id)         stop or place name
 //   ago(at)               'Just now' | 'N min ago' | 'N h ago'
 //   preview   computed([...]) newest 3 for Home: { id, label, icon, stopName, ago }
+//   flash     ref(id | null)  the report that was just posted (for a highlight)
+//   post(type, stop)          add a report and show a toast
 
 import { computed, ref } from 'vue';
 import { useClock } from './useClock.js';
+import { useToast } from './useToast.js';
 import { getExtraPlaces, getReports, getReportTypes, getStops } from '../services/mockService.js';
 
 const reports = ref([]);
 const types = ref([]);
 const places = ref([]);
+const flash = ref(null);
 let loaded = false;
 
 export function useReports() {
@@ -48,5 +52,14 @@ export function useReports() {
     .slice(0, 3)
     .map((r) => ({ id: r.id, label: typeOf(r.type).label, icon: typeOf(r.type).icon, stopName: placeName(r.stop), ago: ago(r.at) })));
 
-  return { reports, types, places, typeOf, placeName, ago, preview };
+  function post(type, stop) {
+    const id = Date.now();
+    reports.value = [{ id, type, stop, note: '', at: tick.value, c: 1, mine: true }, ...reports.value];
+    flash.value = id;
+    useToast().show(`Thanks. "${typeOf(type).label}" at ${placeName(stop)} is live.`);
+    setTimeout(() => { if (flash.value === id) flash.value = null; }, 1500);
+    return id;
+  }
+
+  return { reports, types, places, flash, typeOf, placeName, ago, preview, post };
 }

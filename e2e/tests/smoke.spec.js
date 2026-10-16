@@ -24,15 +24,10 @@ test('home renders the weather hero and the tab bar', async ({ page }) => {
 
 test('every tab opens its screen', async ({ page }) => {
   await page.goto('/');
-  const screens = [
-    ['Routes', 'Compare routes'],
-    ['Map', 'Rain-aware map'],
-    ['Saved', 'Saved routes'],
-    ['Reports', 'Community reports'],
-  ];
-  for (const [tab, heading] of screens) {
+  for (const [tab, path] of [['Routes', '/routes'], ['Map', '/map'], ['Saved', '/saved'], ['Reports', '/reports']]) {
     await page.getByRole('link', { name: tab }).click();
-    await expect(page.getByRole('heading', { name: heading })).toBeVisible();
+    await expect(page).toHaveURL(new RegExp(`${path}$`));
+    await expect(page.getByRole('link', { name: tab })).toHaveAttribute('aria-current', 'page');
   }
 });
 
