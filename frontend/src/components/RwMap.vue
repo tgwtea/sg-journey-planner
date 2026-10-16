@@ -42,9 +42,17 @@ let tiles = null;
 const groups = {};
 
 function tileLayer(dark) {
-  return L.tileLayer(TILES, {
+  return L.tileLayer.wms(TILES, {
     style: dark ? 'Night' : 'Default',
-    minZoom: 11, maxZoom: 19, detectRetina: true, attribution: ATTRIBUTION,
+    // minZoom: 11, maxZoom: 19, detectRetina: true, attribution: ATTRIBUTION,
+    layers: 'Default',
+    format: "image/png",
+    version: "1.0.0",
+    WMTVER:  "1.0.0",
+    crs: L.CRS.EPSG4326,
+    maxZoom: 18,
+    minZoom: 11,
+    attribution: ATTRIBUTION
   });
 }
 
