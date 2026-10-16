@@ -24,15 +24,11 @@ test('home renders the weather hero and the tab bar', async ({ page }) => {
 
 test('every tab opens its screen', async ({ page }) => {
   await page.goto('/');
-  const screens = [
-    ['Routes', 'Compare routes'],
-    ['Map', 'Rain-aware map'],
-    ['Saved', 'Saved routes'],
-    ['Reports', 'Community reports'],
-  ];
-  for (const [tab, heading] of screens) {
-    await page.getByRole('link', { name: tab }).click();
-    await expect(page.getByRole('heading', { name: heading })).toBeVisible();
+  for (const [tab, path] of [['Routes', '/routes'], ['Map', '/map'], ['Saved', '/saved'], ['Reports', '/reports']]) {
+    const link = page.getByRole('navigation', { name: 'Main' }).getByRole('link', { name: tab, exact: true });
+    await link.click();
+    await expect(page).toHaveURL(new RegExp(`${path}$`));
+    await expect(link).toHaveAttribute('aria-current', 'page');
   }
 });
 
@@ -87,4 +83,29 @@ test('map screen loads OneMap tiles and stop markers', async ({ page }) => {
   await expect(page.locator('.leaflet-tile-loaded').first()).toBeVisible({ timeout: 15000 });
   await expect(page.locator('.leaflet-control-attribution')).toContainText('OneMap');
   await expect(page.getByTitle('Dhoby Ghaut MRT station')).toBeVisible();
+});
+
+test('home recommends wait in heavy rain and leave now when clear', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('radio', { name: 'Heavy rain' }).click();
+  await expect(page.getByText(/^Wait \d+ min$/)).toBeVisible();
+  await page.getByRole('radio', { name: 'Clear' }).click();
+  await expect(page.getByText('Leave now', { exact: true })).toBeVisible();
+});
+
+test('home planner runs a plan and sets a reminder', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Changi Airport' }).click();
+  await expect(page.getByRole('textbox', { name: 'Destination' })).toHaveValue('Changi Airport');
+  await page.getByRole('button', { name: 'Plan route' }).click();
+  await expect(page.getByText('Checking your options…')).toBeVisible();
+  await expect(page.getByText('RouteWise recommends')).toBeVisible();
+  await page.getByRole('button', { name: /Remind me at/ }).click();
+  await expect(page.getByRole('status')).toContainText('We will remind you at');
+});
+
+test('home nearby stop opens the map', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: /Dhoby Ghaut/ }).first().click();
+  await expect(page).toHaveURL(/\/map$/);
 });

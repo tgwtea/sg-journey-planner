@@ -14,6 +14,10 @@ const props = defineProps({
   details: { type: String, default: '' },
   updatedAt: { type: String, default: '' },
   errorMessage: { type: String, default: '' },
+  // Replaces the 'Live · updated' chip text, for example in demo mode.
+  label: { type: String, default: '' },
+  // A short line under the details, for example a greeting.
+  note: { type: String, default: '' },
 });
 defineEmits(['refresh']);
 
@@ -36,7 +40,8 @@ const updatedText = computed(() => {
     <div class="rw-content">
     <div class="rw-live rw-mono">
       <span class="rw-dot" :class="{ 'is-off': status !== 'success' }"></span>
-      <template v-if="status === 'success'">Live · updated {{ updatedText }}</template>
+      <template v-if="label">{{ label }}</template>
+      <template v-else-if="status === 'success'">Live · updated {{ updatedText }}</template>
       <template v-else-if="status === 'loading'">Loading weather…</template>
       <template v-else-if="status === 'error'">Weather unavailable</template>
       <template v-else-if="status === 'empty'">No data for this area</template>
@@ -56,6 +61,7 @@ const updatedText = computed(() => {
       <div class="rw-temp">{{ tempText }}</div>
       <div class="rw-title">{{ forecast }}</div>
       <div v-if="details" class="rw-sub">{{ details }}</div>
+      <div v-if="note" class="rw-sub rw-note">{{ note }}</div>
     </template>
 
     <!-- Empty -->
@@ -117,6 +123,7 @@ const updatedText = computed(() => {
 .rw-skeleton { width: 180px; border-radius: 28px; background: var(--heroChip); }
 .rw-title { font-size: 19px; font-weight: 560; }
 .rw-sub { font-size: 15px; color: var(--onHero2); margin-top: 3px; max-width: 420px; text-wrap: pretty; }
+.rw-note { margin-top: 14px; }
 .rw-msg { font-size: 15px; margin-top: 6px; display: flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 20px; background: var(--heroChip); }
 .rw-bar { width: 160px; height: 3px; border-radius: 9999px; background: var(--heroChip); overflow: hidden; margin-top: 14px; }
 .rw-bar span { display: block; height: 100%; background: var(--onHero); animation: rwLoad 1.2s ease-in-out infinite; }
