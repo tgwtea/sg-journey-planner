@@ -10,6 +10,8 @@ export const routes = [
   { path: '/map', name: 'map', component: () => import('../views/MapView.vue'), meta: { label: 'Map', icon: 'map', width: '1180px' } },
   { path: '/saved', name: 'saved', component: () => import('../views/SavedView.vue'), meta: { label: 'Saved', icon: 'bookmark', width: '1180px' } },
   { path: '/reports', name: 'reports', component: () => import('../views/ReportsView.vue'), meta: { label: 'Reports', icon: 'forum', width: '1180px' } },
+  
+  // catch-all route pattern used in Vue Router (Vue 3) to match any URL path that does not match your defined routes
   { path: '/:pathMatch(.*)*', redirect: '/' },
 ];
 

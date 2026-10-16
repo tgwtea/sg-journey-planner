@@ -20,5 +20,10 @@
   "devDependencies": {
     "@playwright/test": "^1.64.0",
     "concurrently": "^10.0.6"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.7",
+    "mongoose": "^9.11.1"
   }
 }
